@@ -6,7 +6,7 @@ package at.stefanhuber.flower.db;
 
 import at.stefanhuber.flower.core.Case;
 import at.stefanhuber.flower.core.Task;
-import at.stefanhuber.flower.core.User;
+import at.stefanhuber.flower.core.security.User;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;

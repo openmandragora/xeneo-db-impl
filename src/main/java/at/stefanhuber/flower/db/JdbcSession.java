@@ -9,6 +9,7 @@ import at.stefanhuber.flower.core.Case;
 import at.stefanhuber.flower.core.CaseType;
 import at.stefanhuber.flower.core.Session;
 import at.stefanhuber.flower.core.Task;
+import at.stefanhuber.flower.core.security.UserServices;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -20,6 +21,12 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  * @author Stefan Huber
  */
 public class JdbcSession extends JdbcDaoSupport implements Session {    
+    
+    private UserServices userServices;
+    
+    public void setUserServices(UserServices us) {
+        this.userServices = us;
+    }    
     
     private static String CASE_BY_URI_QUERY = "select count(*) from `Case` where CaseURI = ?";
         
@@ -43,8 +50,7 @@ public class JdbcSession extends JdbcDaoSupport implements Session {
     }
 
     public Activity createActivity(String title, Date creationDate) {
-        // TODO: get current User Object!!!
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.createActivity(title, userServices.getCurrentUserURI(),creationDate);
     }
 
     public Activity createActivity(String title, String userURI, Date creationDate) {
@@ -83,18 +89,14 @@ public class JdbcSession extends JdbcDaoSupport implements Session {
         return new JdbcCase(this.getDataSource(),caseTypeURI,title,description);
     }
 
-    public Activity createActivity(String title, String caseURI, Collection<String> taskURIs) {
-        //TODO: UserURI
-        
-        Activity act = this.createActivity(title, null, Calendar.getInstance().getTime());        
+    public Activity createActivity(String title, String caseURI, Collection<String> taskURIs) {       
+        Activity act = this.createActivity(title, userServices.getCurrentUserURI(), Calendar.getInstance().getTime());        
         act.addTaskContexts(caseURI, taskURIs);        
         return act;
     }
 
-    public Activity createActivity(String title, Map<String, Collection<String>> caseTaskURIs) {
-        // TODO: There must be a UserURI
-        
-        Activity act = this.createActivity(title, null, Calendar.getInstance().getTime());        
+    public Activity createActivity(String title, Map<String, Collection<String>> caseTaskURIs) {       
+        Activity act = this.createActivity(title, userServices.getCurrentUserURI(), Calendar.getInstance().getTime());        
         act.addTaskContexts(caseTaskURIs);        
         return act;
     }

@@ -49,11 +49,13 @@ DROP TABLE IF EXISTS `flower`.`User` ;
 
 CREATE  TABLE IF NOT EXISTS `flower`.`User` (
   `UserURI` VARCHAR(255) NOT NULL ,
+  `UserName` VARCHAR(100) NOT NULL ,
   `FirstName` VARCHAR(55) NOT NULL ,
   `LastName` VARCHAR(55) NOT NULL ,
   `Password` VARCHAR(100) NOT NULL ,
   PRIMARY KEY (`UserURI`) ,
-  UNIQUE INDEX `UserURI_UNIQUE` (`UserURI` ASC) )
+  UNIQUE INDEX `UserURI_UNIQUE` (`UserURI` ASC) ,
+  UNIQUE INDEX `UserName_UNIQUE` (`UserName` ASC) )
 ENGINE = InnoDB;
 
 
@@ -263,6 +265,6 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `flower`;
-INSERT INTO `flower`.`User` (`UserURI`, `FirstName`, `LastName`, `Password`) VALUES ('http://stefanhuber.at/user/stefan', 'Stefan', 'Huber', 'blub');
+INSERT INTO `flower`.`User` (`UserURI`, `UserName`, `FirstName`, `LastName`, `Password`) VALUES ('http://stefanhuber.at/user/stefan', 'Stefan.Huber', 'Stefan', 'Huber', 'blub');
 
 COMMIT;

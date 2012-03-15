@@ -3,8 +3,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:c="http://www.springframework.org/schema/context"
+       xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
     
     <c:property-placeholder location="classpath:test.properties" />
             
@@ -16,6 +18,28 @@
     </bean> 
     
     <bean id="session" class="at.stefanhuber.flower.db.JdbcSession">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <!-- security -->
+    
+    <bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+        <property name="providers">
+            <list>
+                <ref local="daoAuthenticationProvider"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="jdbcUserDetailsService" class="at.stefanhuber.flower.db.security.JdbcUserDetailsService">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="jdbcUserDetailsService"/>      
+    </bean>
+    
+    <bean id="userServices" class="at.stefanhuber.flower.db.security.JdbcUserServices">
         <property name="dataSource" ref="dataSource" />
     </bean>
     
