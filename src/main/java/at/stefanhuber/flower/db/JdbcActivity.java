@@ -5,8 +5,10 @@
 package at.stefanhuber.flower.db;
 
 import at.stefanhuber.flower.core.Activity;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,23 +21,21 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  * @author Stefan Huber
  */
 public class JdbcActivity extends JdbcDaoSupport implements Activity {
-    
-    private static Logger logger = Logger.getLogger(JdbcActivity.class);
 
-    //private static String ACTIVITY_ATTRIBUTES_UPDATE = "update `Activity` set Title = ? where ActivityURI = ?";
+    private static Logger logger = Logger.getLogger(JdbcActivity.class);
     private static String ACTIVITY_ATTRIBUTES_QUERY = "select * from `Activity` where ActivityURI = ?";
     private static String CREATE_NEW_ACTIVITY = "insert into `Activity` (ActivityURI,Title,CreationDate,UserURI) values (?,?,?,?)";
     private static String ADD_TASK_CONTEXT = "insert into `TaskContext` (ActivityURI,TaskURI,CaseURI) values (?,?,?)";
     private static String REMOVE_TASK_CONTEXT = "delete from `TaskContext` where ActivityURI = ? and TaskURI = ? and CaseURI = ?";
-    
+    private static String TASK_CONTEXT_COUNT_QUERY = "select count(*) from `TaskContext` where ActivityURI = ? and TaskURI = ? and CaseURI = ?";
+    private static String TASK_CONTEXT_BY_ACTIVITY_AND_CASE = "select * from `TaskContext` where ActivityURI = ? and CaseURI = ?";
+    private static String TASK_CONTEXT_BY_ACTIVITY = "select * from `TaskContext` where ActivityURI = ?";
     private String activityURI;
-    
     private String userURI;
     private String title;
     private Date creationDate;
-    
     private boolean updateMe = true;
-    
+
     private void updateMe() {
         Map<String, Object> map = getJdbcTemplate().queryForMap(ACTIVITY_ATTRIBUTES_QUERY, activityURI);
         if (!map.isEmpty()) {
@@ -46,32 +46,32 @@ public class JdbcActivity extends JdbcDaoSupport implements Activity {
 
         updateMe = false;
     }
-    
+
     public JdbcActivity(DataSource dataSource, String title, String userURI, Date creationDate) {
         this.setDataSource(dataSource);
         this.title = title;
         this.userURI = userURI;
         this.creationDate = creationDate;
-        
+
         createActivity();
-        
-        updateMe = false;        
+
+        updateMe = false;
     }
-    
+
     public JdbcActivity(DataSource dataSource, String activityURI) {
         this.setDataSource(dataSource);
-        this.activityURI = activityURI;        
+        this.activityURI = activityURI;
         updateMe = true;
     }
-    
-    private void createActivity() {      
+
+    private void createActivity() {
         if (activityURI == null) {
             // TODO: change and make better
             activityURI = "http://stefanhuber.at/test/" + "/activities/" + creationDate.getTime();
-            getJdbcTemplate().update(CREATE_NEW_ACTIVITY,activityURI,title,creationDate,userURI);
+            getJdbcTemplate().update(CREATE_NEW_ACTIVITY, activityURI, title, creationDate, userURI);
         }
     }
-    
+
     public String getActivityURI() {
         return activityURI;
     }
@@ -98,31 +98,37 @@ public class JdbcActivity extends JdbcDaoSupport implements Activity {
     }
 
     public void addTaskContexts(String caseURI, Collection<String> taskURIs) {
-        Iterator<String> it = taskURIs.iterator(); String taskURI;
+        Iterator<String> it = taskURIs.iterator();
+        String taskURI;
         while (it.hasNext()) {
             taskURI = it.next();
-            logger.info("Add following Task Context: " + activityURI + ", " + taskURI + ", " + caseURI);
-            getJdbcTemplate().update(ADD_TASK_CONTEXT,activityURI,taskURI,caseURI);
-        }       
+            if (getJdbcTemplate().queryForInt(TASK_CONTEXT_COUNT_QUERY, activityURI, taskURI, caseURI) < 1) {
+                logger.info("Add following Task Context: " + activityURI + ", " + taskURI + ", " + caseURI);
+                getJdbcTemplate().update(ADD_TASK_CONTEXT, activityURI, taskURI, caseURI);
+            }
+        }
     }
 
     public void addTaskContexts(Map<String, Collection<String>> caseTaskURIs) {
-        Iterator<String> it1 = caseTaskURIs.keySet().iterator();
+        Iterator<String> it1 = caseTaskURIs.keySet().iterator(); String caseURI, taskURI;
         while (it1.hasNext()) {
-            String caseURI = it1.next();
+            caseURI = it1.next();
             Iterator<String> it2 = caseTaskURIs.get(caseURI).iterator();
-            
             while (it2.hasNext()) {
-                getJdbcTemplate().update(ADD_TASK_CONTEXT,activityURI,it2.next(),caseURI);
-            } 
+                taskURI = it2.next();
+                if (getJdbcTemplate().queryForInt(TASK_CONTEXT_COUNT_QUERY, activityURI, taskURI, caseURI) < 1) {
+                    logger.info("Add following Task Context: " + activityURI + ", " + taskURI + ", " + caseURI);
+                    getJdbcTemplate().update(ADD_TASK_CONTEXT, activityURI, taskURI, caseURI);
+                }
+            }
         }
     }
 
     public void removeTaskContexts(String caseURI, Collection<String> taskURIs) {
         Iterator<String> it = taskURIs.iterator();
         while (it.hasNext()) {
-            getJdbcTemplate().update(REMOVE_TASK_CONTEXT, activityURI,it.next(),caseURI);
-        }       
+            getJdbcTemplate().update(REMOVE_TASK_CONTEXT, activityURI, it.next(), caseURI);
+        }
     }
 
     public void removeTaskContexts(Map<String, Collection<String>> caseTaskURIs) {
@@ -130,19 +136,59 @@ public class JdbcActivity extends JdbcDaoSupport implements Activity {
         while (it1.hasNext()) {
             String caseURI = it1.next();
             Iterator<String> it2 = caseTaskURIs.get(caseURI).iterator();
-            
+
             while (it2.hasNext()) {
-                getJdbcTemplate().update(REMOVE_TASK_CONTEXT,activityURI,it2.next(),caseURI);
-            } 
+                getJdbcTemplate().update(REMOVE_TASK_CONTEXT, activityURI, it2.next(), caseURI);
+            }
         }
     }
 
-    public List<String> getTaskURIs() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Collection<String> getTaskContextsByCaseURI(String caseURI) {
+        Collection<String> tasks = new ArrayList<String>();
+        List<Map<String, Object>> result = getJdbcTemplate().queryForList(TASK_CONTEXT_BY_ACTIVITY_AND_CASE, activityURI, caseURI);
+        if (!result.isEmpty()) {
+            Iterator<Map<String, Object>> it = result.iterator();
+            Map<String, Object> map;
+            while (it.hasNext()) {
+                map = it.next();
+                if (map.containsKey("TaskURI")) {
+                    tasks.add((String) map.get("TaskURI"));
+                }
+            }
+        }
+
+        return tasks;
     }
 
-    public List<String> getCaseURIs() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Map<String, Collection<String>> getTaskContexts() {
+        Map<String, Collection<String>> response = new HashMap<String, Collection<String>>();
+
+        List<Map<String, Object>> result = getJdbcTemplate().queryForList(TASK_CONTEXT_BY_ACTIVITY, activityURI);
+        if (!result.isEmpty()) {
+            Iterator<Map<String, Object>> it = result.iterator();
+            Map<String, Object> map;
+            String caseURI, taskURI;
+            Collection<String> tasks;
+            while (it.hasNext()) {
+                map = it.next();
+                if (map.containsKey("CaseURI") && map.containsKey("TaskURI")) {
+                    caseURI = (String) map.get("CaseURI");
+                    taskURI = (String) map.get("TaskURI");
+                    if (response.containsKey(caseURI)) {
+                        tasks = response.get(caseURI);
+                        if (!tasks.contains(taskURI)) {
+                            tasks.add(taskURI);
+                            response.put(caseURI, tasks);
+                        }
+                    } else {
+                        tasks = new ArrayList<String>();
+                        tasks.add(taskURI);
+                        response.put(caseURI, tasks);
+                    }
+                }
+            }
+        }
+
+        return response;
     }
-    
 }

@@ -78,13 +78,50 @@ public class JdbcActivityTest {
         
         Map<String,Collection<String>> map = new HashMap<String,Collection<String>>();
         map.put(cs1.getCaseURI(), taskList1);
-        map.put(cs2.getCaseURI(), taskList2);
-        
-        taskList1.remove(t4.getTaskURI());
+        map.put(cs2.getCaseURI(), taskList2);       
                
         Activity a1 = session.createActivity("my activity", "http://stefanhuber.at/user/stefan", Calendar.getInstance().getTime(), map);
-        a1.removeTaskContexts(cs1.getCaseURI(), taskList1);
         
+        taskList1.remove(t3.getTaskURI());
+        assertTrue(taskList1.size() == 3);        
+        
+        a1.removeTaskContexts(cs1.getCaseURI(), taskList1);
+                       
+        Collection<String> tC1 = a1.getTaskContextsByCaseURI(cs1.getCaseURI());
+        Collection<String> tC2 = a1.getTaskContextsByCaseURI(cs2.getCaseURI());
+        assertTrue(tC1.size() == 1 && tC2.size() == 3);
+                
+        Collection<String> cont1 = a1.getTaskContextsByCaseURI("http://stefanhuber.at/blub/ahahah");        
+        assertTrue(cont1.isEmpty());
+        
+        // add TaskContexts which already exist
+        a1.addTaskContexts(cs2.getCaseURI(), tC2);
+        assertTrue(a1.getTaskContextsByCaseURI(cs2.getCaseURI()).size() == 3);
+        a1.addTaskContexts(cs2.getCaseURI(), tC2);
+        assertTrue(a1.getTaskContextsByCaseURI(cs2.getCaseURI()).size() == 3);
+                
+        a1.addTaskContexts(map);
+        assertTrue(a1.getTaskContexts().size() == map.size());
+        a1.addTaskContexts(map);
+        assertTrue(a1.getTaskContexts().size() == map.size());
+        
+        // delete TaskContexts which doesn't exist
+        Collection<String> dummyList = new ArrayList<String>();
+        dummyList.add("hallo");
+        dummyList.add("blab");
+        
+        a1.removeTaskContexts("blub", dummyList);
+        assertTrue(a1.getTaskContexts().size() == map.size());
+        
+        Map<String,Collection<String>> dummyMap = new HashMap<String,Collection<String>>();
+        dummyMap.put("puhh", dummyList);
+        dummyMap.put("pähh", dummyList);
+        
+        a1.removeTaskContexts(dummyMap);
+        assertTrue(a1.getTaskContexts().size() == map.size());
+        
+        
+       // TODO: really test remove and get counts okay and data okay, add something remove and get with all different variants (in depht)
         
     }
 }
