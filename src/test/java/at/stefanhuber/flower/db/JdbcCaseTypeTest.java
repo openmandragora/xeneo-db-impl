@@ -4,6 +4,7 @@
  */
 package at.stefanhuber.flower.db;
 
+import org.springframework.security.authentication.AuthenticationManager;
 import org.apache.log4j.Logger;
 import at.stefanhuber.flower.core.CaseType;
 import javax.sql.DataSource;
@@ -23,11 +24,15 @@ import static org.junit.Assert.*;
 public class JdbcCaseTypeTest {
     
     private DataSource dataSource;
+    private AuthenticationManager am;
     static final Logger logger = Logger.getLogger(JdbcTaskTest.class);
     
     public JdbcCaseTypeTest() {
         ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"test-config.xml"});
         dataSource = context.getBean("dataSource", DataSource.class);
+        am = context.getBean("authenticationManager", AuthenticationManager.class);
+        
+        
     }
 
     @BeforeClass

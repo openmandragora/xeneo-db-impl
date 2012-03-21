@@ -5,13 +5,8 @@
 package at.stefanhuber.flower.db;
 
 import at.stefanhuber.flower.core.Activity;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import at.stefanhuber.flower.db.util.URIGenerator;
+import java.util.*;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -23,6 +18,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 public class JdbcActivity extends JdbcDaoSupport implements Activity {
 
     private static Logger logger = Logger.getLogger(JdbcActivity.class);
+    
     private static String ACTIVITY_ATTRIBUTES_QUERY = "select * from `Activity` where ActivityURI = ?";
     private static String CREATE_NEW_ACTIVITY = "insert into `Activity` (ActivityURI,Title,CreationDate,UserURI) values (?,?,?,?)";
     private static String ADD_TASK_CONTEXT = "insert into `TaskContext` (ActivityURI,TaskURI,CaseURI) values (?,?,?)";
@@ -65,9 +61,8 @@ public class JdbcActivity extends JdbcDaoSupport implements Activity {
     }
 
     private void createActivity() {
-        if (activityURI == null) {
-            // TODO: change and make better
-            activityURI = "http://stefanhuber.at/test/" + "/activities/" + creationDate.getTime();
+        if (activityURI == null) {            
+            activityURI = URIGenerator.getInstance().generateURI("activity");
             getJdbcTemplate().update(CREATE_NEW_ACTIVITY, activityURI, title, creationDate, userURI);
         }
     }

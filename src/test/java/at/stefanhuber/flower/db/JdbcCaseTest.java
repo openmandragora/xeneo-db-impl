@@ -29,7 +29,7 @@ public class JdbcCaseTest {
     
     public JdbcCaseTest() {
         ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"test-config.xml"});
-        session = context.getBean("session", JdbcSession.class);
+        session = (JdbcSession) context.getBean("session");
     }
 
     @BeforeClass

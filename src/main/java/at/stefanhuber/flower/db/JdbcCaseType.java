@@ -5,6 +5,7 @@
 package at.stefanhuber.flower.db;
 
 import at.stefanhuber.flower.core.CaseType;
+import at.stefanhuber.flower.db.util.URIGenerator;
 import java.util.Calendar;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -44,10 +45,7 @@ public class JdbcCaseType extends JdbcDaoSupport implements CaseType {
 
     private void createCaseType() {
         if (caseTypeURI == null) {
-
-            // TODO: make it better
-            caseTypeURI = "http://stefanhuber.at/test/" + Calendar.getInstance().getTimeInMillis() + "/case-type/" + title.toLowerCase().trim().replace(' ', '-');
-
+            caseTypeURI = URIGenerator.getInstance().generateURI("casetype");
             getJdbcTemplate().update(CREATE_NEW_CASE_TYPE, caseTypeURI, title, description);
         }
     }

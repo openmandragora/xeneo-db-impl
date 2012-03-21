@@ -4,11 +4,7 @@
  */
 package at.stefanhuber.flower.db;
 
-import at.stefanhuber.flower.core.Activity;
-import at.stefanhuber.flower.core.Case;
-import at.stefanhuber.flower.core.CaseType;
-import at.stefanhuber.flower.core.Session;
-import at.stefanhuber.flower.core.Task;
+import at.stefanhuber.flower.core.*;
 import at.stefanhuber.flower.core.security.UserServices;
 import java.util.Calendar;
 import java.util.Collection;
@@ -40,7 +36,7 @@ public class JdbcSession extends JdbcDaoSupport implements Session {
         // TODO: think of a Exception Hierarchy for flower...
         throw new UnsupportedOperationException("Not supported yet.");        
     }
-
+    
     public Case createCase(String caseTypeURI, String title) {
         return new JdbcCase(this.getDataSource(),caseTypeURI,title);
     }
@@ -76,11 +72,11 @@ public class JdbcSession extends JdbcDaoSupport implements Session {
     public Task createTask(String title, String description) {
         return new JdbcTask(this.getDataSource(),title,description);
     }
-
+    
     public CaseType createCaseType(String title) {
         return new JdbcCaseType(this.getDataSource(),title,"");
     }
-
+    
     public CaseType createCaseType(String title, String description) {
         return new JdbcCaseType(this.getDataSource(),title,description);
     }

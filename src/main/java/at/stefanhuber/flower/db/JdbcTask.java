@@ -7,6 +7,7 @@ package at.stefanhuber.flower.db;
 import at.stefanhuber.flower.core.Activity;
 import at.stefanhuber.flower.core.Task;
 import at.stefanhuber.flower.core.security.User;
+import at.stefanhuber.flower.db.util.URIGenerator;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -45,11 +46,8 @@ public class JdbcTask extends JdbcDaoSupport implements Task {
     }
 
     private void createTask() {
-        if (taskURI == null) {
-
-            // TODO: make it better
-            taskURI = "http://stefanhuber.at/test/" + Calendar.getInstance().getTimeInMillis() + "/task/" + title.toLowerCase().trim().replace(' ', '-');
-
+        if (taskURI == null) {           
+            taskURI = URIGenerator.getInstance().generateURI("task");
             getJdbcTemplate().update(CREATE_NEW_TASK, taskURI, title, description);
         }
     }

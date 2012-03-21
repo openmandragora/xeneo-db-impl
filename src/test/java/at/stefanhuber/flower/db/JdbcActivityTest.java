@@ -15,27 +15,32 @@ import at.stefanhuber.flower.core.Case;
 import at.stefanhuber.flower.core.CaseType;
 import at.stefanhuber.flower.core.Session;
 import java.util.Calendar;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.ApplicationContext;
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
- * @author Stefan
+ * @author Stefan Huber
  */
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations="/test-config.xml")
 public class JdbcActivityTest {
+    Logger logger = Logger.getLogger(JdbcActivityTest.class);
+        
+    @Autowired
+    private JdbcSession session;
     
-    Session session;
-    
-    public JdbcActivityTest() {
-        ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"test-config.xml"});
-        session = context.getBean("session", JdbcSession.class);
-    }
+    public JdbcActivityTest() {}
 
     @BeforeClass
     public static void setUpClass() throws Exception {

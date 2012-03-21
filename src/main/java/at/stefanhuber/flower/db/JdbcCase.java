@@ -7,19 +7,20 @@ package at.stefanhuber.flower.db;
 import at.stefanhuber.flower.core.Case;
 import at.stefanhuber.flower.core.Task;
 import at.stefanhuber.flower.core.security.User;
+import at.stefanhuber.flower.db.util.URIGenerator;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import javax.sql.DataSource;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
  *
  * @author Stefan Huber
  */
 public class JdbcCase extends JdbcDaoSupport implements Case {
-
+    
     private static String CASE_ATTRIBUTES_QUERY = "select * from `Case` where CaseURI = ?";
     private static String CASE_ATTRIBUTES_UPDATE = "update `Case` set Title = ?, Description = ? where CaseURI = ?";
     private static String CREATE_NEW_CASE = "insert into `Case` (CaseURI,Title,CreationDate,CaseTypeURI) values (?,?,?,?)";
@@ -56,10 +57,9 @@ public class JdbcCase extends JdbcDaoSupport implements Case {
     }
     
     private void createCase() {
-        if (caseURI == null) {
+        if (caseURI == null) {            
             
-            // TODO: make it better
-            caseURI = "http://stefanhuber.at/test/" + date.getTime() + "/case/" + title.toLowerCase();
+            caseURI = URIGenerator.getInstance().generateURI("case");
             
             getJdbcTemplate().update(CREATE_NEW_CASE,caseURI,title,date,caseTypeURI);
         }
