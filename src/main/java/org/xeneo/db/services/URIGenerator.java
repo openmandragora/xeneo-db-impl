@@ -2,11 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.stefanhuber.flower.db.util;
+package org.xeneo.db.services;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
  *
@@ -19,8 +20,13 @@ import org.apache.log4j.Logger;
  *
  * @author Stefan Huber
  */
-public class URIGenerator {
+public class URIGenerator extends JdbcDaoSupport {
 
+    private static String GET_NUMBER_BY_URI_QUERY = "select Number from URIGenerator where BaseURI = ?";
+    private static String INSERT_NEW_URI = "insert into `URIGenerator` (BaseURI,Number) values (?,?)";
+    private static String GET_BY_URI_QUERY = "select count(*) from URIGenerator where BaseURI = ?";
+    private static String UPDATE_URI_NUMBER = "update `URIGenerator` set Number = ? where BaseURI = ?";
+    
     private static Logger logger = Logger.getLogger(URIGenerator.class);
     private static String symbols = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static int length; // 62 in standard case
@@ -32,8 +38,7 @@ public class URIGenerator {
     private URI baseURI;
 
     private URIGenerator() {
-        length = symbols.length();
-        n = 0;
+        length = symbols.length();        
     }
     
     private static URIGenerator instance = null;
@@ -48,9 +53,18 @@ public class URIGenerator {
 
     public void setBaseURI(String uri) {
         try {
-            baseURI = new URI(uri);
-            logger.info(baseURI.toASCIIString() + " is set as base URI.");
+            uri.toLowerCase().trim();
             
+            baseURI = new URI(uri);
+            
+            if (getJdbcTemplate().queryForInt(GET_BY_URI_QUERY,uri) > 0) {
+                n = getJdbcTemplate().queryForLong(GET_NUMBER_BY_URI_QUERY,uri);
+            } else {
+                n = 0;
+                getJdbcTemplate().update(INSERT_NEW_URI, uri, n);                
+            }        
+            
+            logger.info(baseURI.toASCIIString() + " is set as base URI with already " + n + " URIs generated.");            
         } catch (URISyntaxException ex) {
             logger.error("The given URI is not valid: " + uri + " Error message: " + ex.getMessage());
         }
@@ -58,8 +72,8 @@ public class URIGenerator {
 
     public String getStringRepresentation(long n) {
         
-        // handle 0 as an exception
-        if (n == 0)
+        // handle 0 and smaller values as exceptions
+        if (n <= 0)
             return "0";
                
         String output = "";
@@ -83,7 +97,9 @@ public class URIGenerator {
             else
                 u = baseURI.getScheme() + "://" + baseURI.getAuthority() + "#" + this.getStringRepresentation(n++);
             
-            out = new URI(u);            
+            out = new URI(u);
+            
+            getJdbcTemplate().update(UPDATE_URI_NUMBER, n, baseURI.toASCIIString());                  
         } catch (URISyntaxException ex) {
             logger.error("The URI couldn't be constructed due to the following error: " + ex.getMessage());
         }        

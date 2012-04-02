@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.stefanhuber.flower.db;
+package org.xeneo.db;
 
-import at.stefanhuber.flower.core.Activity;
-import at.stefanhuber.flower.core.Task;
-import at.stefanhuber.flower.core.security.User;
-import at.stefanhuber.flower.db.util.URIGenerator;
+import org.xeneo.core.Activity;
+import org.xeneo.core.Task;
+import org.xeneo.core.security.User;
+import org.xeneo.db.services.URIGenerator;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;

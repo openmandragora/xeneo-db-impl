@@ -237,6 +237,18 @@ CREATE  TABLE IF NOT EXISTS `flower`.`UserAssignment` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `flower`.`URIGenerator`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`URIGenerator` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`URIGenerator` (
+  `BaseURI` VARCHAR(255) NOT NULL ,
+  `Number` MEDIUMTEXT NOT NULL ,
+  PRIMARY KEY (`BaseURI`) )
+ENGINE = InnoDB;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

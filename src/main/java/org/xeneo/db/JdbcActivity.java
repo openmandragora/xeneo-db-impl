@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.stefanhuber.flower.db;
+package org.xeneo.db;
 
-import at.stefanhuber.flower.core.Activity;
-import at.stefanhuber.flower.db.util.URIGenerator;
+import org.xeneo.core.Activity;
+import org.xeneo.db.services.URIGenerator;
 import java.util.*;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;

@@ -2,10 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.stefanhuber.flower.db.util;
+package org.xeneo.db.util;
 
-import at.stefanhuber.flower.db.util.URIGenerator;
-import java.net.URL;
+import org.xeneo.db.services.URIGenerator;
 import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.junit.*;
@@ -20,14 +19,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Stefan Huber
  */
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations="/test-config.xml")
 public class URIGeneratorTest {
     
     private Logger logger = Logger.getLogger(URIGeneratorTest.class);
     
+    @Autowired
     private URIGenerator gen;
     
-    public URIGeneratorTest() {
-        gen = URIGenerator.getInstance();
+    public URIGeneratorTest() {        
     }
 
     @BeforeClass
@@ -74,7 +75,7 @@ public class URIGeneratorTest {
         }
         
     }
-    
+     
     public void check (long n, String r) {
         logger.info("Check " + n + " return: " + gen.getStringRepresentation(n) + " should be: " + r);
         assertTrue(gen.getStringRepresentation(n).equals(r));
@@ -102,11 +103,12 @@ public class URIGeneratorTest {
         logger.info(gen.generateURI());
         logger.info(gen.generateURI("activity"));
         
-        for (int i = 0; i<10000;i++)
+        for (int i = 0; i<100;i++)
             gen.generateURI();
         
         logger.info(gen.generateURI());
-        logger.info(gen.generateURI("ecommerce/activity"));
-        
+        logger.info(gen.generateURI("ecommerce/activity"));        
     }
+    
+    
 }

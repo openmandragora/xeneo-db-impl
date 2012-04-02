@@ -2,10 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.stefanhuber.flower.db;
+package org.xeneo.db;
 
-import at.stefanhuber.flower.core.*;
-import at.stefanhuber.flower.core.security.UserServices;
+import org.xeneo.core.Session;
+import org.xeneo.core.Case;
+import org.xeneo.core.Activity;
+import org.xeneo.core.CaseType;
+import org.xeneo.core.Task;
+import org.xeneo.core.services.UserServices;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;

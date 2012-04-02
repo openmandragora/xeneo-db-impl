@@ -2,11 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.stefanhuber.flower.db;
+package org.xeneo.db;
 
+import org.xeneo.db.JdbcCaseType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.apache.log4j.Logger;
-import at.stefanhuber.flower.core.CaseType;
+import org.xeneo.core.CaseType;
 import javax.sql.DataSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;

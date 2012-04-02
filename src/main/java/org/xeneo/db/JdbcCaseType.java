@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.stefanhuber.flower.db;
+package org.xeneo.db;
 
-import at.stefanhuber.flower.core.CaseType;
-import at.stefanhuber.flower.db.util.URIGenerator;
+import org.xeneo.core.CaseType;
+import org.xeneo.db.services.URIGenerator;
 import java.util.Calendar;
 import java.util.Map;
 import javax.sql.DataSource;

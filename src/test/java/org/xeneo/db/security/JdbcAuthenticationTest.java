@@ -2,10 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.stefanhuber.flower.db.security;
+package org.xeneo.db.security;
 
-import at.stefanhuber.flower.core.security.User;
-import at.stefanhuber.flower.core.security.UserServices;
+import org.xeneo.db.security.JdbcUser;
+import org.xeneo.core.security.User;
+import org.xeneo.core.services.UserServices;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;

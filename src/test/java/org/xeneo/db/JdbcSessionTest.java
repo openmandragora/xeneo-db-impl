@@ -2,15 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.stefanhuber.flower.db;
+package org.xeneo.db;
 
-import at.stefanhuber.flower.core.Activity;
+import org.xeneo.db.JdbcSession;
+import org.xeneo.core.Activity;
 import java.util.Collection;
 import java.util.ArrayList;
-import at.stefanhuber.flower.core.Task;
+import org.xeneo.core.Task;
 import java.util.Date;
-import at.stefanhuber.flower.core.CaseType;
-import at.stefanhuber.flower.core.Case;
+import org.xeneo.core.CaseType;
+import org.xeneo.core.Case;
 import java.util.Calendar;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;

@@ -2,18 +2,19 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.stefanhuber.flower.db;
+package org.xeneo.db;
 
-import at.stefanhuber.flower.core.Activity;
+import org.xeneo.db.JdbcSession;
+import org.xeneo.core.Activity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
-import at.stefanhuber.flower.core.Task;
-import at.stefanhuber.flower.core.Case;
-import at.stefanhuber.flower.core.CaseType;
-import at.stefanhuber.flower.core.Session;
+import org.xeneo.core.Task;
+import org.xeneo.core.Case;
+import org.xeneo.core.CaseType;
+import org.xeneo.core.Session;
 import java.util.Calendar;
 import org.apache.log4j.Logger;
 import org.junit.After;
