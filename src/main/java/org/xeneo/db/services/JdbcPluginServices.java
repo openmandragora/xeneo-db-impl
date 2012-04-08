@@ -62,5 +62,9 @@ public class JdbcPluginServices extends JdbcDaoSupport implements PluginServices
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public void addPluginInstance(String string, Properties prprts) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     
 }

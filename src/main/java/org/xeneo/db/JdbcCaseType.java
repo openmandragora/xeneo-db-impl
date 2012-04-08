@@ -4,7 +4,7 @@
  */
 package org.xeneo.db;
 
-import org.xeneo.core.CaseType;
+import org.xeneo.core.task.CaseType;
 import org.xeneo.db.services.URIGenerator;
 import java.util.Calendar;
 import java.util.Map;

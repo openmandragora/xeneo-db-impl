@@ -4,17 +4,18 @@
  */
 package org.xeneo.db;
 
-import org.xeneo.db.JdbcSession;
-import org.xeneo.core.Activity;
+import org.xeneo.db.JdbcCaseEngine;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
-import org.xeneo.core.Task;
-import org.xeneo.core.Case;
-import org.xeneo.core.CaseType;
-import org.xeneo.core.Session;
+import org.xeneo.core.activity.OldActivity;
+import org.xeneo.core.task.Case;
+import org.xeneo.core.task.CaseEngine;
+import org.xeneo.core.task.CaseType;
+import org.xeneo.core.task.Task;
+
 import java.util.Calendar;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -39,7 +40,7 @@ public class JdbcActivityTest {
     Logger logger = Logger.getLogger(JdbcActivityTest.class);
         
     @Autowired
-    private JdbcSession session;
+    private JdbcCaseEngine session;
     
     public JdbcActivityTest() {}
 
@@ -86,7 +87,7 @@ public class JdbcActivityTest {
         map.put(cs1.getCaseURI(), taskList1);
         map.put(cs2.getCaseURI(), taskList2);       
                
-        Activity a1 = session.createActivity("my activity", "http://stefanhuber.at/user/stefan", Calendar.getInstance().getTime(), map);
+        OldActivity a1 = session.createActivity("my activity", "http://stefanhuber.at/user/stefan", Calendar.getInstance().getTime(), map);
         
         taskList1.remove(t3.getTaskURI());
         assertTrue(taskList1.size() == 3);        

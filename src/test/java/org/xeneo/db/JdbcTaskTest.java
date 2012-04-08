@@ -6,7 +6,8 @@ package org.xeneo.db;
 
 import org.xeneo.db.JdbcTask;
 import org.apache.log4j.Logger;
-import org.xeneo.core.Task;
+import org.xeneo.core.task.Task;
+
 import javax.sql.DataSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;

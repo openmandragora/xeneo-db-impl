@@ -7,7 +7,8 @@ package org.xeneo.db;
 import org.xeneo.db.JdbcCaseType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.apache.log4j.Logger;
-import org.xeneo.core.CaseType;
+import org.xeneo.core.task.CaseType;
+
 import javax.sql.DataSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;

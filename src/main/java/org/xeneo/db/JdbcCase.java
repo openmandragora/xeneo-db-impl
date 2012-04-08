@@ -4,9 +4,9 @@
  */
 package org.xeneo.db;
 
-import org.xeneo.core.Case;
-import org.xeneo.core.Task;
 import org.xeneo.core.security.User;
+import org.xeneo.core.task.Case;
+import org.xeneo.core.task.Task;
 import org.xeneo.db.services.URIGenerator;
 import java.util.Calendar;
 import java.util.Date;

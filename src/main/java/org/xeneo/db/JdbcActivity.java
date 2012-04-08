@@ -4,7 +4,7 @@
  */
 package org.xeneo.db;
 
-import org.xeneo.core.Activity;
+import org.xeneo.core.activity.OldActivity;
 import org.xeneo.db.services.URIGenerator;
 import java.util.*;
 import javax.sql.DataSource;
@@ -15,84 +15,101 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * @author Stefan Huber
  */
-public class JdbcActivity extends JdbcDaoSupport implements Activity {
+public class JdbcActivity extends JdbcDaoSupport {
 
     private static Logger logger = Logger.getLogger(JdbcActivity.class);
     
-    private static String ACTIVITY_ATTRIBUTES_QUERY = "select * from `Activity` where ActivityURI = ?";
-    private static String CREATE_NEW_ACTIVITY = "insert into `Activity` (ActivityURI,Title,CreationDate,UserURI) values (?,?,?,?)";
     private static String ADD_TASK_CONTEXT = "insert into `TaskContext` (ActivityURI,TaskURI,CaseURI) values (?,?,?)";
     private static String REMOVE_TASK_CONTEXT = "delete from `TaskContext` where ActivityURI = ? and TaskURI = ? and CaseURI = ?";
     private static String TASK_CONTEXT_COUNT_QUERY = "select count(*) from `TaskContext` where ActivityURI = ? and TaskURI = ? and CaseURI = ?";
     private static String TASK_CONTEXT_BY_ACTIVITY_AND_CASE = "select * from `TaskContext` where ActivityURI = ? and CaseURI = ?";
     private static String TASK_CONTEXT_BY_ACTIVITY = "select * from `TaskContext` where ActivityURI = ?";
+    
     private String activityURI;
     private String userURI;
-    private String title;
+    private String actionURI;
+    private String objectURI;
+    private String objectName;
+    private String objectTypeURI;
+    private String targetURI;
+    private String targetName;
+    private String targetTypeURI;
+    private String providerURI;
     private Date creationDate;
-    private boolean updateMe = true;
-
-    private void updateMe() {
-        Map<String, Object> map = getJdbcTemplate().queryForMap(ACTIVITY_ATTRIBUTES_QUERY, activityURI);
-        if (!map.isEmpty()) {
-            this.title = map.containsKey("Title") ? (String) map.get("Title") : "";
-            this.userURI = map.containsKey("UserURI") ? (String) map.get("UserURI") : "";
-            this.creationDate = (Date) (map.containsKey("CreationDate") ? map.get("CreationDate") : null);
-        }
-
-        updateMe = false;
-    }
-
-    public JdbcActivity(DataSource dataSource, String title, String userURI, Date creationDate) {
-        this.setDataSource(dataSource);
-        this.title = title;
-        this.userURI = userURI;
-        this.creationDate = creationDate;
-
-        createActivity();
-
-        updateMe = false;
-    }
-
-    public JdbcActivity(DataSource dataSource, String activityURI) {
-        this.setDataSource(dataSource);
-        this.activityURI = activityURI;
-        updateMe = true;
-    }
-
-    private void createActivity() {
-        if (activityURI == null) {            
-            activityURI = URIGenerator.getInstance().generateURI("activity");
-            getJdbcTemplate().update(CREATE_NEW_ACTIVITY, activityURI, title, creationDate, userURI);
-        }
-    }
-
+    
     public String getActivityURI() {
-        return activityURI;
-    }
+		return activityURI;
+	}
 
-    public String getUserURI() {
-        if (updateMe) {
-            updateMe();
-        }
-        return userURI;
-    }
+	public void setActivityURI(String activityURI) {
+		this.activityURI = activityURI;
+	}
 
-    public Date getCreationDate() {
-        if (updateMe) {
-            updateMe();
-        }
-        return creationDate;
-    }
+	public String getUserURI() {
+		return userURI;
+	}
 
-    public String getTitle() {
-        if (updateMe) {
-            updateMe();
-        }
-        return title;
-    }
+	public void setUserURI(String userURI) {
+		this.userURI = userURI;
+	}
 
-    public void addTaskContexts(String caseURI, Collection<String> taskURIs) {
+	public String getActionURI() {
+		return actionURI;
+	}
+
+	public void setActionURI(String actionURI) {
+		this.actionURI = actionURI;
+	}
+
+	public String getObjectURI() {
+		return objectURI;
+	}
+
+	public void setObjectURI(String objectURI) {
+		this.objectURI = objectURI;
+	}
+
+	public String getObjectName() {
+		return objectName;
+	}
+
+	public void setObjectName(String objectName) {
+		this.objectName = objectName;
+	}
+
+	public String getTargetURI() {
+		return targetURI;
+	}
+
+	public void setTargetURI(String targetURI) {
+		this.targetURI = targetURI;
+	}
+
+	public String getTargetName() {
+		return targetName;
+	}
+
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
+	}
+
+	public String getProviderURI() {
+		return providerURI;
+	}
+
+	public void setProviderURI(String providerURI) {
+		this.providerURI = providerURI;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public void addTaskContexts(String caseURI, Collection<String> taskURIs) {
         Iterator<String> it = taskURIs.iterator();
         String taskURI;
         while (it.hasNext()) {

@@ -4,10 +4,10 @@
  */
 package org.xeneo.db;
 
-import org.xeneo.db.JdbcSession;
+import org.xeneo.db.JdbcCaseEngine;
 import java.util.Date;
 import org.apache.log4j.Logger;
-import org.xeneo.core.Case;
+import org.xeneo.core.task.Case;
 // import org.apache
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;
@@ -26,11 +26,11 @@ public class JdbcCaseTest {
     
     static final Logger logger = Logger.getLogger(JdbcCaseTest.class);
     
-    private JdbcSession session;
+    private JdbcCaseEngine session;
     
     public JdbcCaseTest() {
         ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"test-config.xml"});
-        session = (JdbcSession) context.getBean("session");
+        session = (JdbcCaseEngine) context.getBean("session");
     }
 
     @BeforeClass

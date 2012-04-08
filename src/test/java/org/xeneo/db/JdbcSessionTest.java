@@ -4,14 +4,15 @@
  */
 package org.xeneo.db;
 
-import org.xeneo.db.JdbcSession;
-import org.xeneo.core.Activity;
+import org.xeneo.db.JdbcCaseEngine;
 import java.util.Collection;
 import java.util.ArrayList;
-import org.xeneo.core.Task;
 import java.util.Date;
-import org.xeneo.core.CaseType;
-import org.xeneo.core.Case;
+import org.xeneo.core.activity.OldActivity;
+import org.xeneo.core.task.Case;
+import org.xeneo.core.task.CaseType;
+import org.xeneo.core.task.Task;
+
 import java.util.Calendar;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;
@@ -26,11 +27,11 @@ import static org.junit.Assert.*;
  */
 public class JdbcSessionTest {
     
-    JdbcSession workSession;
+    JdbcCaseEngine workSession;
     
     public JdbcSessionTest() {
         ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"test-config.xml"});
-        workSession = context.getBean("session", JdbcSession.class);
+        workSession = context.getBean("session", JdbcCaseEngine.class);
     }
     
     @Before
@@ -64,7 +65,7 @@ public class JdbcSessionTest {
         
         assertFalse(t1.equals(t2));
         
-        Activity act = workSession.createActivity("Somebody did something", "http://stefanhuber.at/user/stefan", date, cs.getCaseURI(), (Collection) taskList);
+        OldActivity act = workSession.createActivity("Somebody did something", "http://stefanhuber.at/user/stefan", date, cs.getCaseURI(), (Collection) taskList);
    
         Thread.sleep(1000);
         

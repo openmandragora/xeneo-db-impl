@@ -3,13 +3,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>at.stefanhuber</groupId>
+    <groupId>xeneo.org</groupId>
     <artifactId>xeneo-db-impl</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>xeneo-db-impl</name>
-    <url>http://maven.apache.org</url>
+    <url>http://www.xeneo.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,9 +23,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>at.stefanhuber</groupId>
-            <artifactId>flower-core-api</artifactId>
+            <groupId>org.xeneo</groupId>
+            <artifactId>xeneo-core-api</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
         </dependency>          
         <dependency>
             <groupId>javax.servlet</groupId>
