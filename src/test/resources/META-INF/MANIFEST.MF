@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1335122874896
+Build-Jdk: 1.6.0_27
+Built-By: Stefan
+Bundle-ManifestVersion: 2
+Bundle-Name: xeneo-plugin-manager
+Bundle-SymbolicName: org.xeneo.plugin-manager
+Bundle-Version: 1.0.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.xeneo.plugin;uses:="org.springframework.osgi.context
+ ,org.osgi.framework,org.slf4j";version="1.0.0.SNAPSHOT"
+Import-Package: org.eclipse.virgo.medic.eventlog,org.osgi.framework;vers
+ ion="[1.6,2)",org.slf4j;version="[1.6,2)",org.springframework.osgi.cont
+ ext;version="[1.2,2)"
+Private-Packagep: org.xeneo.*
+Tool: Bnd-1.50.0

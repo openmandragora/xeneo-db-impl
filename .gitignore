@@ -1,5 +1,9 @@
 catalog.xml
 target/
+nbactions.xml
+.settings/
+.classpath
+.project
 
 # ignore mysql diagram bak
 *.bak
