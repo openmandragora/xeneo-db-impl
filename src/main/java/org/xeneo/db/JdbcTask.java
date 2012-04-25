@@ -4,7 +4,6 @@
  */
 package org.xeneo.db;
 
-import org.xeneo.core.activity.OldActivity;
 import org.xeneo.core.security.User;
 import org.xeneo.core.task.Task;
 import org.xeneo.db.services.URIGenerator;
@@ -81,10 +80,6 @@ public class JdbcTask extends JdbcDaoSupport implements Task {
     }
 
     public List<User> getParticipants() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public List<OldActivity> getRecentActivities(int number) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

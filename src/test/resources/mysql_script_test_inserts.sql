@@ -74,23 +74,52 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `flower`.`Object`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`Object` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`Object` (
+  `ObjectURI` VARCHAR(255) NOT NULL ,
+  `Name` VARCHAR(255) NOT NULL ,
+  `ObjectTypeURI` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`ObjectURI`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `flower`.`Activity`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `flower`.`Activity` ;
 
 CREATE  TABLE IF NOT EXISTS `flower`.`Activity` (
   `ActivityURI` VARCHAR(255) NOT NULL ,
-  `Title` VARCHAR(255) NOT NULL ,
   `CreationDate` DATETIME NOT NULL ,
   `UserURI` VARCHAR(255) NOT NULL ,
+  `ActionURI` VARCHAR(255) NOT NULL ,
+  `ObjectURI` VARCHAR(255) NOT NULL ,
+  `TargetURI` VARCHAR(255) NULL ,
+  `Description` TEXT NULL ,
+  `summary` VARCHAR(255) NULL ,
   PRIMARY KEY (`ActivityURI`) ,
   UNIQUE INDEX `ActivityURI_UNIQUE` (`ActivityURI` ASC) ,
   INDEX `UserURI` (`UserURI` ASC) ,
+  INDEX `ActivityObject` (`ObjectURI` ASC) ,
+  INDEX `ActivityTarget` (`TargetURI` ASC) ,
   CONSTRAINT `UserURI`
     FOREIGN KEY (`UserURI` )
     REFERENCES `flower`.`User` (`UserURI` )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `ActivityObject`
+    FOREIGN KEY (`ObjectURI` )
+    REFERENCES `flower`.`Object` (`ObjectURI` )
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `ActivityTarget`
+    FOREIGN KEY (`TargetURI` )
+    REFERENCES `flower`.`Object` (`ObjectURI` )
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -246,6 +275,113 @@ CREATE  TABLE IF NOT EXISTS `flower`.`URIGenerator` (
   `BaseURI` VARCHAR(255) NOT NULL ,
   `Number` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`BaseURI`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`Plugin`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`Plugin` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`Plugin` (
+  `PluginURI` VARCHAR(255) NOT NULL ,
+  `Title` VARCHAR(100) NOT NULL ,
+  `Description` TEXT NULL ,
+  `Classname` VARCHAR(255) NOT NULL ,
+  `Active` TINYINT(1) NOT NULL ,
+  `PluginType` VARCHAR(255) NOT NULL ,
+  `BundleID` MEDIUMTEXT NOT NULL ,
+  PRIMARY KEY (`PluginURI`) ,
+  UNIQUE INDEX `PluginURI_UNIQUE` (`PluginURI` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`PluginInstance`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`PluginInstance` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstance` (
+  `PluginInstanceID` INT NOT NULL AUTO_INCREMENT ,
+  `PluginURI` VARCHAR(255) NOT NULL ,
+  `Active` TINYINT(1) NOT NULL ,
+  `CronString` VARCHAR(255) NOT NULL ,
+  `OwnerURI` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`PluginInstanceID`) ,
+  INDEX `PluginType` (`PluginURI` ASC) ,
+  CONSTRAINT `PluginType`
+    FOREIGN KEY (`PluginURI` )
+    REFERENCES `flower`.`Plugin` (`PluginURI` )
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`PluginConfiguration`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`PluginConfiguration` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfiguration` (
+  `PluginConfigurationID` INT NOT NULL AUTO_INCREMENT ,
+  `PluginInstanceID` INT NOT NULL ,
+  PRIMARY KEY (`PluginConfigurationID`) ,
+  INDEX `pip` (`PluginInstanceID` ASC) ,
+  CONSTRAINT `pip`
+    FOREIGN KEY (`PluginInstanceID` )
+    REFERENCES `flower`.`PluginInstance` (`PluginInstanceID` )
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`PluginConfigurationContext`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`PluginConfigurationContext` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfigurationContext` (
+  `TaskURI` VARCHAR(255) NOT NULL ,
+  `CaseURI` VARCHAR(255) NOT NULL ,
+  `PluginConfigurationID` INT NOT NULL AUTO_INCREMENT ,
+  PRIMARY KEY (`PluginConfigurationID`, `CaseURI`, `TaskURI`) ,
+  INDEX `Context2Task` (`TaskURI` ASC) ,
+  INDEX `Context2Case` (`CaseURI` ASC) ,
+  INDEX `PluginConfigurationContext` (`PluginConfigurationID` ASC) ,
+  CONSTRAINT `Context2Task`
+    FOREIGN KEY (`TaskURI` )
+    REFERENCES `flower`.`Task` (`TaskURI` )
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `Context2Case`
+    FOREIGN KEY (`CaseURI` )
+    REFERENCES `flower`.`Case` (`CaseURI` )
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `PluginConfigurationContext`
+    FOREIGN KEY (`PluginConfigurationID` )
+    REFERENCES `flower`.`PluginConfiguration` (`PluginConfigurationID` )
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`PluginConfigurationProperties`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`PluginConfigurationProperties` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfigurationProperties` (
+  `Key` VARCHAR(255) NOT NULL ,
+  `PluginConfigurationID` INT NOT NULL ,
+  `Value` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`Key`, `PluginConfigurationID`) ,
+  INDEX `PConfig` (`PluginConfigurationID` ASC) ,
+  CONSTRAINT `PConfig`
+    FOREIGN KEY (`PluginConfigurationID` )
+    REFERENCES `flower`.`PluginConfiguration` (`PluginConfigurationID` )
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 

@@ -6,7 +6,8 @@ package org.xeneo.db.services;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
@@ -27,7 +28,7 @@ public class URIGenerator extends JdbcDaoSupport {
     private static String GET_BY_URI_QUERY = "select count(*) from URIGenerator where BaseURI = ?";
     private static String UPDATE_URI_NUMBER = "update `URIGenerator` set Number = ? where BaseURI = ?";
     
-    private static Logger logger = Logger.getLogger(URIGenerator.class);
+    private static Logger logger = LoggerFactory.getLogger(URIGenerator.class);
     private static String symbols = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static int length; // 62 in standard case
     /*

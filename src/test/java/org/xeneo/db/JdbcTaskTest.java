@@ -5,7 +5,8 @@
 package org.xeneo.db;
 
 import org.xeneo.db.JdbcTask;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xeneo.core.task.Task;
 
 import javax.sql.DataSource;
@@ -17,18 +18,26 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
- * @author Stefan
+ * @author Stefan Huber
  */
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "/test-config.xml")
 public class JdbcTaskTest {
     
-    static final Logger logger = Logger.getLogger(JdbcTaskTest.class);
+    static final Logger logger = LoggerFactory.getLogger(JdbcTaskTest.class);
+    
+    @Autowired
+    JdbcCaseEngine engine;
     
     public JdbcTaskTest() {
-        ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"test-config.xml"});
-        dataSource = context.getBean("dataSource", DataSource.class);
     }
 
     @BeforeClass
@@ -51,13 +60,16 @@ public class JdbcTaskTest {
     }
 
     @Test
-    public void testCreateTask() {       
-        Task task = new JdbcTask(dataSource,"My first Task","My Task Description");
+    public void testCreateTask() {   
+        String title = "My first Task", desc = "My Task Description"; 
         
-        String title = task.getTitle();
-        String desc = task.getDescription();
+        Task task = engine.createTask(title, desc);
         
         logger.info("Old Title: " + title + ", old Description: " + desc);
+        
+        assertEquals(title,task.getTitle());
+        assertEquals(desc,task.getDescription());
+        
         
         task.updateTitle("my blub title");
         task.updateDescription("my blub description");

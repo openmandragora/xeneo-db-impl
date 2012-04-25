@@ -6,7 +6,8 @@ package org.xeneo.db;
 
 import org.xeneo.db.JdbcCaseType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xeneo.core.task.CaseType;
 
 import javax.sql.DataSource;
@@ -18,23 +19,30 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.xeneo.core.task.CaseEngine;
 
 /**
  *
- * @author Stefan
+ * @author Stefan Huber
  */
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "/test-config.xml")
 public class JdbcCaseTypeTest {
-    
-    private DataSource dataSource;
+        
+    @Autowired
     private AuthenticationManager am;
-    static final Logger logger = Logger.getLogger(JdbcTaskTest.class);
     
-    public JdbcCaseTypeTest() {
-        ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"test-config.xml"});
-        dataSource = context.getBean("dataSource", DataSource.class);
-        am = context.getBean("authenticationManager", AuthenticationManager.class);
-        
-        
+    @Autowired
+    private JdbcCaseEngine engine;
+    
+    static final Logger logger = LoggerFactory.getLogger(JdbcTaskTest.class);
+    
+    public JdbcCaseTypeTest() {        
     }
 
     @BeforeClass
@@ -58,7 +66,7 @@ public class JdbcCaseTypeTest {
         
         String title = "My Case Type"; String description = "My Case Type Description";
         
-        CaseType ct = new JdbcCaseType(dataSource,title,description);
+        CaseType ct = engine.createCaseType(title, description);
         
         logger.info("CaseType created with URI: " + ct.getCaseTypeURI() + ", Title: " + ct.getTitle() + " and Description: " + ct.getDescription());
         
@@ -70,7 +78,7 @@ public class JdbcCaseTypeTest {
         
         String title = "My Second Case Type"; String description = "My Second Case Type Description";
         
-        CaseType ct = new JdbcCaseType(dataSource,title,description);
+        CaseType ct = engine.createCaseType(title, description);
         
         logger.info("CaseType created with URI: " + ct.getCaseTypeURI() + ", Title: " + ct.getTitle() + " and Description: " + ct.getDescription());
         

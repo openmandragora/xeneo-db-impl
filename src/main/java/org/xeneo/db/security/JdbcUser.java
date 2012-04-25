@@ -8,7 +8,7 @@ import org.xeneo.core.security.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @author Stefan Huber
  */
 public class JdbcUser implements UserDetails, User {
-    
+
     private String FirstName, LastName, UserURI, Username, Password;
 
     public JdbcUser(String Username, String Password, String FirstName, String LastName, String UserURI) {
@@ -25,13 +25,6 @@ public class JdbcUser implements UserDetails, User {
         this.UserURI = UserURI;
         this.Username = Username;
         this.Password = Password;
-    }   
-
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
-        auths.add(new SimpleGrantedAuthority("ROLE_SOMEONE"));
-        
-        return auths;
     }
 
     public String getPassword() {
@@ -69,5 +62,12 @@ public class JdbcUser implements UserDetails, User {
     public String getLastName() {
         return this.LastName;
     }
-    
+
+    public Collection<GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
+
+        auths.add(new GrantedAuthorityImpl("ROLE_SOMEONE"));
+
+        return auths;
+    }
 }

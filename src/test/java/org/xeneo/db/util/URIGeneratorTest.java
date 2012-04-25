@@ -6,7 +6,8 @@ package org.xeneo.db.util;
 
 import org.xeneo.db.services.URIGenerator;
 import java.util.Stack;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
@@ -23,7 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations="/test-config.xml")
 public class URIGeneratorTest {
     
-    private Logger logger = Logger.getLogger(URIGeneratorTest.class);
+    private Logger logger = LoggerFactory.getLogger(URIGeneratorTest.class);
     
     @Autowired
     private URIGenerator gen;

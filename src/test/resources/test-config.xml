@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:c="http://www.springframework.org/schema/context"
-       xmlns:security="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
                            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                           http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
     
     <c:property-placeholder location="classpath:test.properties" />
     <c:annotation-config />
+    
+    <!--
+    <jdbc:embedded-database id="dataSource2" type="HSQL">
+        <jdbc:script location="classpath:mysql_script_test_inserts.sql" />
+    </jdbc:embedded-database>    
+    -->
                 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${jdbc.driver}"/>
@@ -18,11 +26,11 @@
         <property name="password" value="${jdbc.password}"/>
     </bean> 
     
-    <bean id="session" class="at.stefanhuber.flower.db.JdbcSession">
+    <bean id="engine" class="org.xeneo.db.JdbcCaseEngine">
         <property name="dataSource" ref="dataSource" />
     </bean>
     
-    <bean id="uriGen" class="at.stefanhuber.flower.db.util.URIGenerator" factory-method="getInstance">
+    <bean id="uriGen" class="org.xeneo.db.services.URIGenerator" factory-method="getInstance">
         <property name="dataSource" ref="dataSource" />
         <property name="baseURI" value="http://mytest.org" />       
     </bean>
@@ -54,7 +62,7 @@
         </property>
     </bean>    
     
-    <bean id="jdbcUserDetailsService" class="at.stefanhuber.flower.db.security.JdbcUserDetailsService">
+    <bean id="jdbcUserDetailsService" class="org.xeneo.db.security.JdbcUserDetailsService">
         <property name="dataSource" ref="dataSource" />
     </bean>
     
@@ -62,8 +70,23 @@
         <property name="userDetailsService" ref="jdbcUserDetailsService"/>      
     </bean>
     
-    <bean id="userServices" class="at.stefanhuber.flower.db.security.JdbcUserServices">
+    <bean id="userServices" class="org.xeneo.db.security.JdbcUserServices">
         <property name="dataSource" ref="dataSource" />
     </bean>
     
+    <bean id="stream" class="org.xeneo.db.JdbcActivityStream">
+    	<property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
+    <bean id="manager" class="org.xeneo.db.JdbcActivityManager">
+    	<property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>    
+    
+    <bean id="pluginManager" class="org.xeneo.db.JdbcPluginManager">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+    	<property name="dataSource" ref="dataSource"></property>
+    </bean>
 </beans>

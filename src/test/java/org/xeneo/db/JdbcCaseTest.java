@@ -4,9 +4,11 @@
  */
 package org.xeneo.db;
 
+import java.util.Calendar;
 import org.xeneo.db.JdbcCaseEngine;
 import java.util.Date;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xeneo.core.task.Case;
 // import org.apache
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -17,21 +19,25 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.xeneo.core.task.CaseType;
 
 /**
  *
- * @author Stefan
+ * @author Stefan Huber
  */
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "/test-config.xml")
 public class JdbcCaseTest {
     
-    static final Logger logger = Logger.getLogger(JdbcCaseTest.class);
+    static final Logger logger = LoggerFactory.getLogger(JdbcCaseTest.class);
     
-    private JdbcCaseEngine session;
-    
-    public JdbcCaseTest() {
-        ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"test-config.xml"});
-        session = (JdbcCaseEngine) context.getBean("session");
-    }
+    @Autowired
+    private JdbcCaseEngine engine;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -48,12 +54,37 @@ public class JdbcCaseTest {
     @After
     public void tearDown() {
     }
+    
+    @Test
+    public void testCaseStory() {
+        
+        String title = "case title"; String desc = "case desc";
+        
+        CaseType ct = engine.createCaseType("my test type", "description");
+        
+        Case c1 = engine.createCase(ct.getCaseTypeURI(), title, desc);
+        
+        assertEquals(ct.getCaseTypeURI(),c1.getCaseTypeURI());
+        assertEquals(c1.getTitle(),title);
+        assertEquals(c1.getDescription(),desc);
+        
+        assertTrue(c1.getCreationDate().before(Calendar.getInstance().getTime()));      
+        
+        c1.updateTitle("new title");
+        assertFalse(title.equalsIgnoreCase(c1.getTitle()));
+        
+        c1.updateDescription("new desc");
+        assertFalse(desc.equals(c1.getDescription()));
+        
+        
+    }
+    
    
     @Test
     public void testCaseAttributes() {
         String case_1 = "http://stefanhuber.at/flower/test/case_1";
         
-        Case myCase = session.getCaseByURI(case_1);        
+        Case myCase = engine.getCaseByURI(case_1);        
         assertEquals(myCase.getCaseURI(),case_1);       
         assertTrue(!myCase.getTitle().isEmpty());
         assertTrue(!myCase.getDescription().isEmpty());
@@ -66,7 +97,7 @@ public class JdbcCaseTest {
     
     @Test 
     public void testNewCase() {
-        Case myCase = session.createCase("http://stefanhuber.at/flower/test/ecommerce_case", "MyTitle");
+        Case myCase = engine.createCase("http://stefanhuber.at/flower/test/ecommerce_case", "MyTitle");
         
         assertTrue(!myCase.getCaseURI().isEmpty());
         assertTrue(!myCase.getCaseTypeURI().isEmpty());
@@ -78,10 +109,10 @@ public class JdbcCaseTest {
     public void testUpdateTitle() {
         String case_1 = "http://stefanhuber.at/flower/test/case_1";
         
-        Case myCase = session.getCaseByURI(case_1);
+        Case myCase = engine.getCaseByURI(case_1);
         
         String old = myCase.getTitle();
-        myCase.updateTitle("my new title");
+        myCase.updateTitle("my new title" + Calendar.getInstance().getTime());
         
         assertFalse(old.equals(myCase.getTitle()));                
     }
@@ -90,10 +121,10 @@ public class JdbcCaseTest {
     public void testUpdateDescription() {
         String case_1 = "http://stefanhuber.at/flower/test/case_1";
         
-        Case myCase = session.getCaseByURI(case_1);
+        Case myCase = engine.getCaseByURI(case_1);
         
         String old = myCase.getDescription();
-        myCase.updateDescription("my new description");
+        myCase.updateDescription("my new description" + Calendar.getInstance().getTime());
         
         assertFalse(old.equals(myCase.getDescription()));   
     }

@@ -4,7 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,14 +17,14 @@ import org.xeneo.core.activity.Filter;
 
 public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream {
 
-	private static Logger logger = Logger.getLogger(JdbcActivityStream.class);
+	private static Logger logger = LoggerFactory.getLogger(JdbcActivityStream.class);
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
 	// SQL queries
-	private static String GET_ACTIVITIES_BY_TASK_AND_CASE = "select * from Activity a inner join TaskContext c on a.ActivityURI = c.ActivityURI WHERE c.TaskURI = %s and c.CaseURI = %s ORDER BY CreationDate LIMIT %s";
-	private static String GET_ACTIVITIES_BY_CASE = "select * from Activity a inner join TaskContext c on a.ActivityURI = c.ActivityURI WHERE c.CaseURI = %s ORDER BY CreationDate LIMIT %s";
+	private static String GET_ACTIVITIES_BY_TASK_AND_CASE = "select * from Activity a inner join TaskContext c on a.ActivityURI = c.ActivityURI inner join Object o on a.ObjectURI = o.ObjectURI inner join Object t on a.TargetURI = t.ObjectURI  WHERE c.TaskURI = '%s' and c.CaseURI = '%s' ORDER BY CreationDate LIMIT 0, %s";
+	private static String GET_ACTIVITIES_BY_CASE = "select * from Activity a inner join TaskContext c on a.ActivityURI = c.ActivityURI inner join Object o on a.ObjectURI = o.ObjectURI inner join Object t on a.TargetURI = t.ObjectURI WHERE c.CaseURI = '%s' ORDER BY a.CreationDate LIMIT 0, %s";
 
 	
 	public List<Activity> getActivities(String caseURI, String taskURI, int limit) {			
@@ -41,15 +42,15 @@ public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream
 		                Activity act = new Activity();
 		                		                
 		                act.setActivityURI(rs.getString("ActivityURI"));
-		                act.setActorURI(rs.getString("ActorURI"));
+		                act.setActorURI(rs.getString("UserURI"));
 		                act.setActionURI(rs.getString("ActionURI"));
 		                act.setCreationDate(rs.getDate("CreationDate"));
 		                act.setSummary(rs.getString("Summary"));
-		                act.setContent(rs.getString("Content"));
+		                act.setDescription(rs.getString("Description"));
 		                
 		                Object obj = new Object();
-		                obj.setObjectName(rs.getString("ObjectName"));
-		                obj.setObjectTypeURI(rs.getString("ObjectTypeURI"));
+		                obj.setObjectName(rs.getString("o.Name"));
+		                obj.setObjectTypeURI(rs.getString("o.ObjectTypeURI"));
 		                obj.setObjectURI(rs.getString("ObjectURI"));
 		                act.setObject(obj);
 		                
@@ -57,8 +58,8 @@ public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream
 		                if (!targetURI.isEmpty()) {
 		                	Object tar = new Object();
 		                	tar.setObjectURI(targetURI);
-		                	tar.setObjectName(rs.getString("TargetName"));
-		                	tar.setObjectTypeURI(rs.getString("TargetTypeURI"));
+		                	tar.setObjectName(rs.getString("t.Name"));
+		                	tar.setObjectTypeURI(rs.getString("t.ObjectTypeURI"));
 		                	act.setTarget(tar);
 		                }		                
 		                

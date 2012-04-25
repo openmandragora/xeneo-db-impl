@@ -8,7 +8,6 @@ import org.xeneo.db.JdbcCaseEngine;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Date;
-import org.xeneo.core.activity.OldActivity;
 import org.xeneo.core.task.Case;
 import org.xeneo.core.task.CaseType;
 import org.xeneo.core.task.Task;
@@ -20,20 +19,23 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
- * @author Stefan
+ * @author Stefan Huber
  */
-public class JdbcSessionTest {
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "/test-config.xml")
+public class JdbcCaseEngineTest {
     
-    JdbcCaseEngine workSession;
-    
-    public JdbcSessionTest() {
-        ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"test-config.xml"});
-        workSession = context.getBean("session", JdbcCaseEngine.class);
-    }
-    
+    @Autowired
+    JdbcCaseEngine engine;
+        
     @Before
     public void setUp() {
 
@@ -46,9 +48,9 @@ public class JdbcSessionTest {
     @Test
     public void testCreationStory() throws InterruptedException {
         
-        CaseType ct = workSession.createCaseType("Ecommerce Case", "The Ecommcer Case represents an Ecommerce related Project...");
+        CaseType ct = engine.createCaseType("Ecommerce Case", "The Ecommcer Case represents an Ecommerce related Project...");
         
-        Case cs = workSession.createCase(ct.getCaseTypeURI(), "Franzis Webshop", "Franzis Webshop needs to be built");
+        Case cs = engine.createCase(ct.getCaseTypeURI(), "Franzis Webshop", "Franzis Webshop needs to be built");
         
         Date date = cs.getCreationDate();
         
@@ -56,8 +58,8 @@ public class JdbcSessionTest {
         
         assertTrue(date.before(Calendar.getInstance().getTime()));
         
-        Task t1 = workSession.createTask("My First Task", "What a shitty Task...");
-        Task t2 = workSession.createTask("My Second Task","Oh....");
+        Task t1 = engine.createTask("My First Task", "What a shitty Task...");
+        Task t2 = engine.createTask("My Second Task","Oh....");
         
         ArrayList<String> taskList = new ArrayList<String>();
         taskList.add(t1.getTaskURI());
@@ -65,11 +67,9 @@ public class JdbcSessionTest {
         
         assertFalse(t1.equals(t2));
         
-        OldActivity act = workSession.createActivity("Somebody did something", "http://stefanhuber.at/user/stefan", date, cs.getCaseURI(), (Collection) taskList);
    
         Thread.sleep(1000);
         
-        assertTrue(act.getCreationDate().before(Calendar.getInstance().getTime()));
         
     }
     
@@ -78,7 +78,7 @@ public class JdbcSessionTest {
         
         String case_1 = "http://stefanhuber.at/flower/test/case_1";
         
-        Case myCase = workSession.getCaseByURI(case_1);
+        Case myCase = engine.getCaseByURI(case_1);
         
         assertEquals(myCase.getCaseURI(),case_1);
     }

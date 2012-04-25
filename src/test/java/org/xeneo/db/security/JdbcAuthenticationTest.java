@@ -7,7 +7,8 @@ package org.xeneo.db.security;
 import org.xeneo.db.security.JdbcUser;
 import org.xeneo.core.security.User;
 import org.xeneo.core.services.UserServices;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +28,7 @@ import static org.junit.Assert.*;
  */
 public class JdbcAuthenticationTest {
     
-    private static Logger logger = Logger.getLogger(JdbcAuthenticationTest.class);
+    private static Logger logger = LoggerFactory.getLogger(JdbcAuthenticationTest.class);
     private AuthenticationManager am;
     private UserServices us;
     
