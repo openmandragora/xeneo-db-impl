@@ -45,7 +45,7 @@ public class JdbcActivityTest {
 
     Logger logger = LoggerFactory.getLogger(JdbcActivityTest.class);
     // amount of activities to test
-    private final int n = 20;
+    private final int n = 5;
     @Autowired
     private JdbcCaseEngine engine;
     @Autowired

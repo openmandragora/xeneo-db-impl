@@ -33,7 +33,13 @@ public class JdbcPluginManager implements PluginManager {
     private static final String PLUGIN_DEACTIVATE = "update Plugin set Active=0 where PluginURI = ?";
     private static final String PLUGIN_LIST = "select PluginURI,PluginType,Title,Description,Classname,BundleID from Plugin where Active=1 and PluginType in(%s)";
 
+    public void init() {
+        logger.info("PluginManager initialized.");
+    }
+    
     public void addPlugin(PluginDescriptor descriptor) {
+        logger.info("Try to add plugin with URI: " + descriptor.getPluginURI() + " and name: " + descriptor.getTitle());
+                
         int i = jdbcTemplate.queryForInt(PLUGIN_EXISTS, descriptor.getPluginURI());
         if (i > 0) {
             logger.info("update Plugin: " + descriptor.getTitle());

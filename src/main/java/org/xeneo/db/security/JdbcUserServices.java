@@ -37,5 +37,9 @@ public class JdbcUserServices extends JdbcDaoSupport implements UserServices {
     public String getCurrentUsername() {
         return getCurrentJdbcUser().getUsername();
     }
+
+    public org.xeneo.core.security.User getUserMapping(String externalUsername, String pluginURI) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

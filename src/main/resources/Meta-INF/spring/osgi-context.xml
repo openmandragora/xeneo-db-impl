@@ -13,8 +13,7 @@
     <osgi:service interface="org.xeneo.core.plugin.PluginManager" ref="pluginManager" />    
     
     <osgi:reference id="dataSource" interface="javax.sql.DataSource" />
-        
-    <!--osgi:reference id="eventLogger" interface="org.eclipse.virgo.medic.eventlog.EventLogger"/-->
-           
+    
+    <osgi:reference id="eventLogger" interface="org.eclipse.virgo.medic.eventlog.EventLogger" />          
         
 </beans>

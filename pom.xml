@@ -41,7 +41,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>3.0.5.RELEASE</version>
+            <version>3.0.5.RELEASE</version>            
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -132,8 +132,8 @@
                 </executions>
                 <extensions>true</extensions>
                 <configuration>
-                    <instructions>            
-                        
+                    <instructions>                           
+                        <Import-Package>org.eclipse.virgo.medic.eventlog,*</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -141,4 +141,18 @@
         </plugins>
 
     </build>
+    
+    <repositories>
+        <repository>
+            <id>xeneo-snap</id>
+            <url>http://www.wi.fh-kufstein.ac.at:40700/nexus/content/repositories/xeneo/</url>
+        </repository>
+    </repositories>
+    
+    <distributionManagement>
+        <snapshotRepository>
+            <id>xeneo-snap</id>
+            <url>http://www.wi.fh-kufstein.ac.at:40700/nexus/content/repositories/xeneo/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
