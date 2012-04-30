@@ -14,4 +14,12 @@
                 <goal>deploy</goal>
             </goals>
         </action>
+        <action>
+            <actionName>CUSTOM-skip test</actionName>
+            <displayName>skip test</displayName>
+            <goals>
+                <goal>install</goal>
+                <goal>-Dmaven.skip.test=true</goal>
+            </goals>
+        </action>
     </actions>
