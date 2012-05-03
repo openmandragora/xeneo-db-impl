@@ -14,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xeneo.core.plugin.PluginDescriptor;
 import org.xeneo.core.plugin.PluginManager;
+import org.xeneo.db.testutils.PluginUtil;
 
 /**
  *
@@ -26,6 +27,9 @@ public class JdbcPluginManagerTest {
     
     @Autowired
     PluginManager pm;
+    
+    @Autowired
+    PluginUtil pUtil;
     
     private final int n = 10;
     
@@ -50,28 +54,10 @@ public class JdbcPluginManagerTest {
     public void tearDown() {
     }
     
-    public List<PluginDescriptor> createRandomPlugins(int i, String[] types) {
-        List<PluginDescriptor> list = new ArrayList<PluginDescriptor>();
-        
-        for (int j = 0; j < i; j++) {            
-                        
-            PluginDescriptor pd = new PluginDescriptor();
-            pd.setTitle("Plugin Title " + j);
-            pd.setDescription("Plugin Description " + j);
-            pd.setPluginURI("http://test.com/plugin/" + Calendar.getInstance().getTimeInMillis() + "/" + j);
-            pd.setPluginType(types[j%types.length]);
-            pd.setID(Calendar.getInstance().getTimeInMillis());
-            pd.setPluginClass("org.xeneo.Plugin" + j);
-            list.add(pd);
-        }        
-        
-        return list;
-    }
-
     @Test
     public void testAddPlugin() {
         
-        List<PluginDescriptor> pds = createRandomPlugins(n,new String[]{PluginDescriptor.ACTIVITY_PLUGIN_TYPE});
+        List<PluginDescriptor> pds = pUtil.createRandomPlugins(n,new String[]{PluginDescriptor.ACTIVITY_PLUGIN_TYPE});
         logger.info("Start adding Plugins: " + pds.size());
         
         Iterator<PluginDescriptor> it1 = pds.iterator();
@@ -129,7 +115,7 @@ public class JdbcPluginManagerTest {
         assertTrue(before > pds.size());
         
         before = pds.size();                
-        pm.addPlugin(createRandomPlugins(1, new String[]{PluginDescriptor.ACTIVITY_LISTENER_PLUGIN_TYPE}).get(0));  
+        pm.addPlugin(pUtil.createRandomPlugins(1, new String[]{PluginDescriptor.ACTIVITY_LISTENER_PLUGIN_TYPE}).get(0));  
         pds = pm.listAvailablePlugins(types);
         
         assertTrue(before < pds.size());
@@ -137,7 +123,7 @@ public class JdbcPluginManagerTest {
     
     @Test
     public void testGetPluginDescriptor() {
-        List<PluginDescriptor> pds = createRandomPlugins(2, new String[]{PluginDescriptor.ACTIVITY_LISTENER_PLUGIN_TYPE});
+        List<PluginDescriptor> pds = pUtil.createRandomPlugins(2, new String[]{PluginDescriptor.ACTIVITY_LISTENER_PLUGIN_TYPE});
         
         pm.addPlugin(pds.get(0));
         pm.addPlugin(pds.get(1));

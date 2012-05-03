@@ -302,12 +302,11 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `flower`.`PluginInstance` ;
 
 CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstance` (
-  `PluginInstanceID` INT NOT NULL AUTO_INCREMENT ,
   `PluginURI` VARCHAR(255) NOT NULL ,
+  `OwnerURI` VARCHAR(255) NOT NULL ,
   `Active` TINYINT(1) NOT NULL ,
   `CronString` VARCHAR(255) NOT NULL ,
-  `OwnerURI` VARCHAR(255) NOT NULL ,
-  PRIMARY KEY (`PluginInstanceID`) ,
+  PRIMARY KEY (`PluginURI`, `OwnerURI`) ,
   INDEX `PluginType` (`PluginURI` ASC) ,
   CONSTRAINT `PluginType`
     FOREIGN KEY (`PluginURI` )
@@ -324,14 +323,15 @@ DROP TABLE IF EXISTS `flower`.`PluginConfiguration` ;
 
 CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfiguration` (
   `PluginConfigurationID` INT NOT NULL AUTO_INCREMENT ,
-  `PluginInstanceID` INT NOT NULL ,
-  PRIMARY KEY (`PluginConfigurationID`) ,
-  INDEX `pip` (`PluginInstanceID` ASC) ,
-  CONSTRAINT `pip`
-    FOREIGN KEY (`PluginInstanceID` )
-    REFERENCES `flower`.`PluginInstance` (`PluginInstanceID` )
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
+  `PluginURI` VARCHAR(255) NOT NULL ,
+  `OwnerURI` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`PluginConfigurationID`, `PluginURI`, `OwnerURI`) ,
+  INDEX `InstanceReference` (`PluginURI` ASC, `OwnerURI` ASC) ,
+  CONSTRAINT `InstanceReference`
+    FOREIGN KEY (`PluginURI` , `OwnerURI` )
+    REFERENCES `flower`.`PluginInstance` (`PluginURI` , `OwnerURI` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -361,21 +361,21 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfigurationContext` (
   CONSTRAINT `PluginConfigurationContext`
     FOREIGN KEY (`PluginConfigurationID` )
     REFERENCES `flower`.`PluginConfiguration` (`PluginConfigurationID` )
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `flower`.`PluginConfigurationProperties`
+-- Table `flower`.`PluginConfigurationProperty`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `flower`.`PluginConfigurationProperties` ;
+DROP TABLE IF EXISTS `flower`.`PluginConfigurationProperty` ;
 
-CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfigurationProperties` (
-  `Key` VARCHAR(255) NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfigurationProperty` (
+  `Name` VARCHAR(255) NOT NULL ,
   `PluginConfigurationID` INT NOT NULL ,
   `Value` VARCHAR(255) NOT NULL ,
-  PRIMARY KEY (`Key`, `PluginConfigurationID`) ,
+  PRIMARY KEY (`Name`, `PluginConfigurationID`) ,
   INDEX `PConfig` (`PluginConfigurationID` ASC) ,
   CONSTRAINT `PConfig`
     FOREIGN KEY (`PluginConfigurationID` )

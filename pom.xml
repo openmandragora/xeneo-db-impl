@@ -24,6 +24,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.xeneo</groupId>
+            <artifactId>xeneo-core-api</artifactId>
+            <version>1.0-SNAPSHOT</version>        
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>3.0.5.RELEASE</version>
@@ -74,13 +79,6 @@
             <version>5.1.19</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.xeneo</groupId>
-            <artifactId>xeneo-core-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -103,9 +101,18 @@
                     <dependency>
                         <groupId>mysql</groupId>
                         <artifactId>mysql-connector-java</artifactId>
-                        <version>5.1.18</version>
+                        <version>5.1.19</version>
                     </dependency>
                 </dependencies>
+                
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <phase>process-test-resources</phase>
+                    </execution>
+                </executions>
 
                 <configuration>
                     <driver>${jdbc.driver}</driver>

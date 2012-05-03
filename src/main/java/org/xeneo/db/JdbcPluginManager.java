@@ -26,6 +26,7 @@ public class JdbcPluginManager implements PluginManager {
     public void setJdbcTemplate(JdbcTemplate jt) {
         this.jdbcTemplate = jt;
     }
+    
     private static final String PLUGIN_EXISTS = "select count(*) from Plugin where PluginURI = ?";
     private static final String PLUGIN_SELECT = "select * from Plugin where PluginURI = %s";
     private static final String PLUGIN_ADD = "insert into Plugin (PluginURI,PluginType,Title,Description,Classname,BundleID,Active) values (?,?,?,?,?,?,?)";
