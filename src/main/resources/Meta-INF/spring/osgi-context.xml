@@ -12,6 +12,8 @@
     
     <osgi:service interface="org.xeneo.core.plugin.PluginManager" ref="pluginManager" />    
     
+    <osgi:service interface="org.xeneo.core.plugin.PluginInstanceManager" ref="pluginInstanceManager" />
+    
     <osgi:reference id="dataSource" interface="javax.sql.DataSource" />
     
     <!--osgi:reference id="eventLogger" interface="org.eclipse.virgo.medic.eventlog.EventLogger" /-->          

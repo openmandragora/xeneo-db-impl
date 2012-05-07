@@ -51,7 +51,7 @@ public class JdbcPluginInstanceManager implements PluginInstanceManager {
         String ownerURI = pc.getOwnerURI();
         
         // TODO: throw exception if parameters are missing
-
+        // TODO: either try to create, or throw exception if not exists...
         createPluginInstance(pluginURI, ownerURI);
 
         int pcId = pc.getID();
@@ -85,6 +85,7 @@ public class JdbcPluginInstanceManager implements PluginInstanceManager {
     
     public List<PluginConfiguration> listPluginConfigurations(String pluginURI, String ownerURI) {
         // TODO: Plugins with no PluginConfigurationProperty set are not recognized by this query...
+        // TODO: plugin instance properties need to be recognized
         List<Map<String, Object>> result = jdbcTemplate.queryForList(GET_PLUGIN_CONFIGURATION, pluginURI, ownerURI);
         logger.info(result.size() + " Plugin Configuratin Properties found for Plugins with URI: " + pluginURI + " and defined for Owner: " + ownerURI);
         
@@ -123,5 +124,20 @@ public class JdbcPluginInstanceManager implements PluginInstanceManager {
         }
 
         return pcs;
+    }
+
+    public void addPluginInstanceProperties(String pluginURI, String ownerURI, Properties properties) {
+        
+        // TODO: either try to create, or throw exception if not exists...
+        createPluginInstance(pluginURI, ownerURI);
+        
+        Iterator<Object> keys = properties.keySet().iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+        }
+    }
+
+    public void addPluginInstanceProperties(Properties properties) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
