@@ -99,11 +99,10 @@ public class JdbcActivityTest {
             Actor acto = new Actor();
             acto.setActivityProviderURI(testURI+uniquePath+"/ActivityProviderURI/"+i);
             acto.setActorName("ActorName: "+i);
-            acto.setActorURI("http://stefanhuber.at/user/stefan");
-            acto.setUserURI(testURI+uniquePath+"/UserURI/"+i);
+            acto.setActorURI("http://xeneo.org/user/markus/",ap.getActivityProviderName(),"/"+acto.getActorName());
             
-            
-            
+            a.setActor((acto));
+            a.setActivityProvider(ap);
             
             Object obj = new Object();
             obj.setObjectURI(testURI + "object/" + i);
@@ -142,7 +141,7 @@ public class JdbcActivityTest {
             for (int j = 0; j < n; j++) {
                 Activity a = as.get(j);
 
-                assertEquals(a.getActor().getActorURI(), "http://stefanhuber.at/user/stefan");
+                assertEquals(a.getActor().getActorURI(), "http://xeneo.org/user/markus/ActivityProviderName: "+j+"/ActorName: "+j);
 
             }
 

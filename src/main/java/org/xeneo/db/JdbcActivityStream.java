@@ -52,9 +52,9 @@ public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream
                                 
                                 Actor acto = new Actor();
                                 acto.setActorName(rs.getString("ac.ActorName"));
-                                acto.setActorURI(rs.getString("ac.ActorURI"));
-                                acto.setUserURI(rs.getString("ac.UserURI"));
-                                acto.setActivityProviderURI(rs.getString("ActivityProviderURI"));
+                                //User mapping with actor name!!! HOWTO?                                
+                                //acto.setActorURI(rs.getString("ac.ActorURI"));
+                                acto.setActivityProviderURI(rs.getString("actp.ActivityProviderURI"));
                                 
 		                Object obj = new Object();
 		                obj.setObjectName(rs.getString("o.Name"));

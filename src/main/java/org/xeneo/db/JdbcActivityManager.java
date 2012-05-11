@@ -26,8 +26,8 @@ public class JdbcActivityManager implements ActivityManager {
     private static String TASK_CONTEXT_BY_ACTIVITY_AND_CASE = "select * from `TaskContext` where ActivityURI = ? and CaseURI = ?";
     private static String TASK_CONTEXT_BY_ACTIVITY = "select * from `TaskContext` where ActivityURI = ?";
     private static String GET_ACTOR_BY_URI = "select count(*) from Actor where ActorURI = ?";
-    private static String UPDATE_ACTOR_BY_URI = "update Actor set ActorName = ?, set UserURI = ?, set ActivityProviderURI = ? where ActorURI = ?";
-    private static String ADD_ACTOR = "insert into Actor (ActorURI, ActorName, UserURI, ActivityProviderURI) values(?,?,?,?)";
+    private static String UPDATE_ACTOR_BY_URI = "update Actor set ActorName = ?, set ActivityProviderURI = ? where ActorURI = ?";
+    private static String ADD_ACTOR = "insert into Actor (ActorURI, ActorName, ActivityProviderURI) values(?,?,?,?)";
     private static String GET_ACTIVITYPROVIDER_BY_URI = "select count(*) from ActivityProvider where ActivityProviderURI = ?";
     private static String UPDATE_ACTIVITYPROVIDER_BY_URI = "update ActivityProvider set ActivityProviderName = ?, set ActivityProviderType = ? where ActivityProviderURI = ?";
     private static String ADD_ACTIVITYPROVIDER = "insert into ActivityProvider (ActivityProviderURI, ActivityProviderName, ActivityProviderType";
@@ -85,9 +85,9 @@ public class JdbcActivityManager implements ActivityManager {
 
         // check if actor exists otherwise create one
         if (isExistingActor(acto.getActorURI())) {
-            jdbcTemplate.update(UPDATE_ACTOR_BY_URI, acto.getActorName(), acto.getUserURI(), acto.getActivityProviderURI(), acto.getActorURI());
+            jdbcTemplate.update(UPDATE_ACTOR_BY_URI, acto.getActorName(), acto.getActivityProviderURI(), acto.getActorURI());
         } else {
-            jdbcTemplate.update(ADD_ACTOR, acto.getActorURI(), acto.getActorName(), acto.getUserURI(), acto.getActivityProviderURI());
+            jdbcTemplate.update(ADD_ACTOR, acto.getActorURI(), acto.getActorName(), acto.getActivityProviderURI());
         }
 
         jdbcTemplate.update(ADD_ACTIVITY, a.getActivityURI(), a.getCreationDate(), acto.getActorURI(), a.getActionURI(), obj.getObjectURI(), tar.getObjectURI(), a.getDescription(), a.getSummary(), ap.getActivityProviderURI());
