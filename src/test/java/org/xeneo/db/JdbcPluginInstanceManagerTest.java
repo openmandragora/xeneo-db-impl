@@ -108,14 +108,36 @@ public class JdbcPluginInstanceManagerTest {
         if (pds.size() < 1) {
             throw new Exception("no Plugins available!");
         }
-
+               
         PluginDescriptor pd = pds.get(1);
 
         String owner = "http://stefanhuber.at/me";
         String plugin = pd.getPluginURI();
 
         PluginConfiguration pc = pUtils.createRandomPluginConfiguration(plugin, owner);
+        
+        Properties instProps = new Properties();
+        instProps.setProperty("key1","val1");
+        instProps.setProperty("key2","val2");
+        instProps.setProperty("key3","val3");
+        
+        pc.setInstanceProperties(instProps);
 
+        pim.addPluginInstanceProperties(pc);
+        List<PluginConfiguration> l2 = pim.listPluginConfigurations(plugin, owner);
+                
+        if (l2.size() < 1)
+            throw new Exception("no Plugin Instance Properties");
+        
+        Iterator<PluginConfiguration> i = l2.listIterator();
+        Properties testProps = i.next().getInstanceProperties();
+        
+        logger.info(l2.size() + " Plugin Configurations...");
+        
+        logger.info(instProps.size() + " == " + testProps.size());
+        assertTrue(instProps.size() == testProps.size());
+        assertTrue(testProps.containsKey("key1") && testProps.containsKey("key2") && testProps.containsKey("key3"));
+                
         List<PluginConfiguration> pcs = pim.listPluginConfigurations(plugin, owner);
         Iterator<PluginConfiguration> it = pcs.iterator();
         while (it.hasNext()) {
@@ -125,7 +147,13 @@ public class JdbcPluginInstanceManagerTest {
         }
 
         pcs = pim.listPluginConfigurations(plugin, owner);
-        assertTrue(pcs.size() < 1);
+        assertTrue(pcs.size() == 1);
+        Iterator<PluginConfiguration> ii = pcs.iterator();
+        PluginConfiguration pii = ii.next();
+        assertTrue(pii.getConfigurationProperties() == null);
+        assertTrue(pii.getInstanceProperties().size() > 0);
+        
+        assertFalse(ii.hasNext());
 
         pim.addPluginConfiguration(pc);
         assertTrue(pc.getID() < 0);
@@ -134,8 +162,8 @@ public class JdbcPluginInstanceManagerTest {
         assertTrue(pcs.size() == 1);
         PluginConfiguration pc2 = pcs.get(0);
 
-        Properties p1 = pc.getProperties();
-        Properties p2 = pc2.getProperties();
+        Properties p1 = pc.getConfigurationProperties();
+        Properties p2 = pc2.getConfigurationProperties();
 
         assertEquals(p1.size(), p2.size());
 

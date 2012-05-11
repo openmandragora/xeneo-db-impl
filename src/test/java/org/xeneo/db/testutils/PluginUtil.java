@@ -45,8 +45,7 @@ public class PluginUtil {
             props.setProperty("testProperty3" + j, "something3");
             props.setProperty("testProperty4" + j, "something4");
 
-            pc.setProperties(props);
-            pc.setProperties(props);
+            pc.setConfigurationProperties(props);
             
             pcs.add(pc);
         }

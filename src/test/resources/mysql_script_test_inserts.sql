@@ -305,7 +305,6 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstance` (
   `PluginURI` VARCHAR(255) NOT NULL ,
   `OwnerURI` VARCHAR(255) NOT NULL ,
   `Active` TINYINT(1) NOT NULL ,
-  `CronString` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`PluginURI`, `OwnerURI`) ,
   INDEX `PluginType` (`PluginURI` ASC) ,
   CONSTRAINT `PluginType`
@@ -382,6 +381,26 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfigurationProperty` (
     REFERENCES `flower`.`PluginConfiguration` (`PluginConfigurationID` )
     ON DELETE CASCADE
     ON UPDATE RESTRICT)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`PluginInstanceProperty`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`PluginInstanceProperty` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstanceProperty` (
+  `PluginURI` VARCHAR(255) NOT NULL ,
+  `OwnerURI` VARCHAR(255) NOT NULL ,
+  `Name` VARCHAR(255) NOT NULL ,
+  `Value` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`PluginURI`, `Name`, `OwnerURI`) ,
+  INDEX `PluginInstance2Property` (`PluginURI` ASC, `OwnerURI` ASC) ,
+  CONSTRAINT `PluginInstance2Property`
+    FOREIGN KEY (`PluginURI` , `OwnerURI` )
+    REFERENCES `flower`.`PluginInstance` (`PluginURI` , `OwnerURI` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
