@@ -3,17 +3,14 @@ package org.xeneo.db;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.xeneo.core.activity.Activity;
-import org.xeneo.core.activity.ActivityStream;
+import org.xeneo.core.activity.*;
 import org.xeneo.core.activity.Object;
-import org.xeneo.core.activity.Filter;
 
 public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream {
 
@@ -23,8 +20,8 @@ public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream
 	private JdbcTemplate jdbcTemplate;
 	
 	// SQL queries
-	private static String GET_ACTIVITIES_BY_TASK_AND_CASE = "select * from Activity a inner join TaskContext c on a.ActivityURI = c.ActivityURI inner join Object o on a.ObjectURI = o.ObjectURI inner join Object t on a.TargetURI = t.ObjectURI  WHERE c.TaskURI = '%s' and c.CaseURI = '%s' ORDER BY CreationDate LIMIT 0, %s";
-	private static String GET_ACTIVITIES_BY_CASE = "select * from Activity a inner join TaskContext c on a.ActivityURI = c.ActivityURI inner join Object o on a.ObjectURI = o.ObjectURI inner join Object t on a.TargetURI = t.ObjectURI WHERE c.CaseURI = '%s' ORDER BY a.CreationDate LIMIT 0, %s";
+	private static String GET_ACTIVITIES_BY_TASK_AND_CASE = "select * from Activity a inner join TaskContext c on a.ActivityURI = c.ActivityURI inner join Object o on a.ObjectURI = o.ObjectURI inner join Object t on a.TargetURI = t.ObjectURI inner join Actor ac on a.ActorURI = ac.ActorURI inner join ActivityPlugin actp on a.ActivityPluginURI = actp.ActivityPluginURI WHERE c.TaskURI = '%s' and c.CaseURI = '%s' ORDER BY CreationDate LIMIT 0, %s";
+	private static String GET_ACTIVITIES_BY_CASE = "select * from Activity a inner join TaskContext c on a.ActivityURI = c.ActivityURI inner join Object o on a.ObjectURI = o.ObjectURI inner join Object t on a.TargetURI = t.ObjectURI inner join Actor ac on a.ActorURI = ac.ActorURI inner join ActivityPlugin actp on a.ActivityPluginURI = actp.ActivityPluginURI WHERE c.CaseURI = '%s' ORDER BY a.CreationDate LIMIT 0, %s";
 
 	
 	public List<Activity> getActivities(String caseURI, String taskURI, int limit) {			
@@ -42,12 +39,23 @@ public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream
 		                Activity act = new Activity();
 		                		                
 		                act.setActivityURI(rs.getString("ActivityURI"));
-		                act.setActorURI(rs.getString("UserURI"));
+		                //act.setActorURI(rs.getString("UserURI"));
 		                act.setActionURI(rs.getString("ActionURI"));
 		                act.setCreationDate(rs.getDate("CreationDate"));
 		                act.setSummary(rs.getString("Summary"));
 		                act.setDescription(rs.getString("Description"));
 		                
+                                ActivityProvider ap = new ActivityProvider();
+                                ap.setActivityProviderName(rs.getString("actp.ActivityProviderName"));
+                                ap.setActivityProviderType(rs.getString("actp.ActivityProviderType"));
+                                ap.setActivityProviderURI(rs.getString("ActivityProviderURI"));
+                                
+                                Actor acto = new Actor();
+                                acto.setActorName(rs.getString("ac.ActorName"));
+                                //User mapping with actor name!!! HOWTO?                                
+                                //acto.setActorURI(rs.getString("ac.ActorURI"));
+                                acto.setActivityProviderURI(rs.getString("actp.ActivityProviderURI"));
+                                
 		                Object obj = new Object();
 		                obj.setObjectName(rs.getString("o.Name"));
 		                obj.setObjectTypeURI(rs.getString("o.ObjectTypeURI"));
