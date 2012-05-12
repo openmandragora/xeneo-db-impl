@@ -34,6 +34,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.xeneo.core.activity.ActivityProvider;
+import org.xeneo.core.activity.Actor;
+import org.xeneo.core.plugin.activity.ActivityPlugin;
 
 /**
  *
@@ -83,11 +86,24 @@ public class JdbcActivityTest {
             Activity a = new Activity();
             a.setActivityURI(testURI + uniquePath + "/activity/" + i);
             a.setActionURI(testURI + "action/" + i);
-            a.setActorURI("http://stefanhuber.at/user/stefan");
+            //a.setActorURI("http://stefanhuber.at/user/stefan");
             a.setCreationDate(Calendar.getInstance().getTime());
             a.setSummary("Summary of activity for: " + i);
             a.setDescription("Content of activity for: " + i);
-
+            
+            ActivityProvider ap = new ActivityProvider();
+            ap.setActivityProviderName("ActivityProviderName: "+i);
+            ap.setActivityProviderType("ActivityProviderType: "+i);
+            ap.setActivityProviderURI(testURI + uniquePath+"/ActivityProviderURI/"+i);
+            
+            Actor acto = new Actor();
+            acto.setActivityProviderURI(testURI+uniquePath+"/ActivityProviderURI/"+i);
+            acto.setActorName("ActorName: "+i);
+            acto.setActorURI("http://xeneo.org/user/markus/",ap.getActivityProviderName(),"/"+acto.getActorName());
+            
+            a.setActor((acto));
+            a.setActivityProvider(ap);
+            
             Object obj = new Object();
             obj.setObjectURI(testURI + "object/" + i);
             obj.setObjectName("object name: " + i);
@@ -125,7 +141,7 @@ public class JdbcActivityTest {
             for (int j = 0; j < n; j++) {
                 Activity a = as.get(j);
 
-                assertEquals(a.getActorURI(), "http://stefanhuber.at/user/stefan");
+                assertEquals(a.getActor().getActorURI(), "http://xeneo.org/user/markus/ActivityProviderName: "+j+"/ActorName: "+j);
 
             }
 
