@@ -68,7 +68,7 @@ public class JdbcActivityTest {
     @Test
     public void testActivityCreation() {
         List<Activity> acts = this.createRandomActivities("ctest", n);
-
+        
         Iterator<Activity> it = acts.iterator();
         while (it.hasNext()) {
             Activity a = it.next();

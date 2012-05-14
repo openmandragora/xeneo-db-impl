@@ -19,7 +19,7 @@
         <jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
         <jdbc.dbname>flower</jdbc.dbname>
         <jdbc.username>root</jdbc.username>
-        <jdbc.password></jdbc.password>
+        <jdbc.password>root</jdbc.password>
     </properties>
 
     <dependencies>

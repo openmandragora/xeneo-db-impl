@@ -20,8 +20,8 @@ public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream
 	private JdbcTemplate jdbcTemplate;
 	
 	// SQL queries
-	private static String GET_ACTIVITIES_BY_TASK_AND_CASE = "select * from Activity a inner join TaskContext c on a.ActivityURI = c.ActivityURI inner join Object o on a.ObjectURI = o.ObjectURI inner join Object t on a.TargetURI = t.ObjectURI inner join Actor ac on a.ActorURI = ac.ActorURI inner join ActivityPlugin actp on a.ActivityPluginURI = actp.ActivityPluginURI WHERE c.TaskURI = '%s' and c.CaseURI = '%s' ORDER BY CreationDate LIMIT 0, %s";
-	private static String GET_ACTIVITIES_BY_CASE = "select * from Activity a inner join TaskContext c on a.ActivityURI = c.ActivityURI inner join Object o on a.ObjectURI = o.ObjectURI inner join Object t on a.TargetURI = t.ObjectURI inner join Actor ac on a.ActorURI = ac.ActorURI inner join ActivityPlugin actp on a.ActivityPluginURI = actp.ActivityPluginURI WHERE c.CaseURI = '%s' ORDER BY a.CreationDate LIMIT 0, %s";
+	private static String GET_ACTIVITIES_BY_TASK_AND_CASE = "select * from ActivityView WHERE TaskURI = '%s' and CaseURI = '%s' ORDER BY CreationDate LIMIT 0, %s";
+	private static String GET_ACTIVITIES_BY_CASE = "select * from ActivityView WHERE CaseURI = '%s' ORDER BY CreationDate LIMIT 0, %s";
 
 	
 	public List<Activity> getActivities(String caseURI, String taskURI, int limit) {			
