@@ -344,7 +344,6 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstance` (
   `PluginURI` VARCHAR(255) NOT NULL ,
   `OwnerURI` VARCHAR(255) NOT NULL ,
   `Active` TINYINT(1) NOT NULL ,
-  `CronString` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`PluginURI`, `OwnerURI`) ,
   INDEX `PluginType` (`PluginURI` ASC) ,
   CONSTRAINT `PluginType`
@@ -430,10 +429,17 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `flower`.`PluginInstanceProperty` ;
 
 CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstanceProperty` (
-  `PluginInstanceID` INT NOT NULL ,
   `Name` VARCHAR(255) NOT NULL ,
   `Value` VARCHAR(255) NOT NULL ,
-  PRIMARY KEY (`PluginInstanceID`, `Name`) )
+  `PluginURI` VARCHAR(255) NOT NULL ,
+  `OwnerURI` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`Name`, `PluginURI`, `OwnerURI`) ,
+  INDEX `PI2PIP` (`PluginURI` ASC, `OwnerURI` ASC) ,
+  CONSTRAINT `PI2PIP`
+    FOREIGN KEY (`PluginURI` , `OwnerURI` )
+    REFERENCES `flower`.`PluginInstance` (`PluginURI` , `OwnerURI` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
