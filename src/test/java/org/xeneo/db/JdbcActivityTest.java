@@ -78,6 +78,10 @@ public class JdbcActivityTest {
             }
         }
     }
+    
+    public String trim(String in) {
+        return in.trim().replace(' ', '-').toLowerCase();
+    }
 
     public List<Activity> createRandomActivities(String uniquePath, int n) {
         List<Activity> acts = new ArrayList<Activity>();
@@ -99,7 +103,7 @@ public class JdbcActivityTest {
             Actor acto = new Actor();
             acto.setActivityProviderURI(testURI+uniquePath+"/ActivityProviderURI/"+i);
             acto.setActorName("ActorName: "+i);
-            acto.setActorURI("http://xeneo.org/user/markus/",ap.getActivityProviderName(),"/"+acto.getActorName());
+            acto.setActorURI("http://xeneo.org/user/markus/"+trim(acto.getActorName()));
             
             a.setActor((acto));
             a.setActivityProvider(ap);
