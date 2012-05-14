@@ -78,6 +78,7 @@ public class JdbcPluginInstanceManagerTest {
         String[] types = {PluginDescriptor.ACTIVITY_PLUGIN_TYPE, PluginDescriptor.ACTIVITY_LISTENER_PLUGIN_TYPE};
         List<PluginDescriptor> pds = pm.listAvailablePlugins(types);
 
+        
         if (pds.size() < 1) {
             throw new Exception("no Plugins available!");
         }
