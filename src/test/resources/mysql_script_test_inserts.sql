@@ -87,6 +87,19 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `flower`.`Actor`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`Actor` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`Actor` (
+  `ActorName` VARCHAR(255) NOT NULL ,
+  `ActivityProviderURI` VARCHAR(255) NOT NULL ,
+  `ActorURI` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`ActorURI`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `flower`.`Activity`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `flower`.`Activity` ;
@@ -94,22 +107,18 @@ DROP TABLE IF EXISTS `flower`.`Activity` ;
 CREATE  TABLE IF NOT EXISTS `flower`.`Activity` (
   `ActivityURI` VARCHAR(255) NOT NULL ,
   `CreationDate` DATETIME NOT NULL ,
-  `UserURI` VARCHAR(255) NOT NULL ,
   `ActionURI` VARCHAR(255) NOT NULL ,
   `ObjectURI` VARCHAR(255) NOT NULL ,
   `TargetURI` VARCHAR(255) NULL ,
   `Description` TEXT NULL ,
   `summary` VARCHAR(255) NULL ,
+  `ActorURI` VARCHAR(255) NULL ,
+  `ActivityPluginURI` VARCHAR(255) NULL ,
   PRIMARY KEY (`ActivityURI`) ,
   UNIQUE INDEX `ActivityURI_UNIQUE` (`ActivityURI` ASC) ,
-  INDEX `UserURI` (`UserURI` ASC) ,
   INDEX `ActivityObject` (`ObjectURI` ASC) ,
   INDEX `ActivityTarget` (`TargetURI` ASC) ,
-  CONSTRAINT `UserURI`
-    FOREIGN KEY (`UserURI` )
-    REFERENCES `flower`.`User` (`UserURI` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+  INDEX `ActorURI` () ,
   CONSTRAINT `ActivityObject`
     FOREIGN KEY (`ObjectURI` )
     REFERENCES `flower`.`Object` (`ObjectURI` )
@@ -119,7 +128,12 @@ CREATE  TABLE IF NOT EXISTS `flower`.`Activity` (
     FOREIGN KEY (`TargetURI` )
     REFERENCES `flower`.`Object` (`ObjectURI` )
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `ActorURI`
+    FOREIGN KEY ()
+    REFERENCES `flower`.`Actor` ()
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -305,6 +319,7 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstance` (
   `PluginURI` VARCHAR(255) NOT NULL ,
   `OwnerURI` VARCHAR(255) NOT NULL ,
   `Active` TINYINT(1) NOT NULL ,
+  `CronString` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`PluginURI`, `OwnerURI`) ,
   INDEX `PluginType` (`PluginURI` ASC) ,
   CONSTRAINT `PluginType`
@@ -390,17 +405,62 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `flower`.`PluginInstanceProperty` ;
 
 CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstanceProperty` (
-  `PluginURI` VARCHAR(255) NOT NULL ,
-  `OwnerURI` VARCHAR(255) NOT NULL ,
   `Name` VARCHAR(255) NOT NULL ,
   `Value` VARCHAR(255) NOT NULL ,
-  PRIMARY KEY (`PluginURI`, `Name`, `OwnerURI`) ,
-  INDEX `PluginInstance2Property` (`PluginURI` ASC, `OwnerURI` ASC) ,
+  `PluginURI` VARCHAR(255) NOT NULL ,
+  `OwnerURI` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`Name`, `PluginURI`, `OwnerURI`) ,
   CONSTRAINT `PluginInstance2Property`
     FOREIGN KEY (`PluginURI` , `OwnerURI` )
     REFERENCES `flower`.`PluginInstance` (`PluginURI` , `OwnerURI` )
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`ActivityProvider`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`ActivityProvider` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`ActivityProvider` (
+  `ActivityProviderURI` VARCHAR(255) NULL ,
+  `ActivityProviderName` VARCHAR(255) NULL ,
+  `ActivityProviderType` VARCHAR(255) NULL ,
+  PRIMARY KEY (`ActivityProviderURI`) ,
+  INDEX `ActivityProviderURI` () ,
+  INDEX `ActivityProviderURI` () ,
+  CONSTRAINT `ActivityProviderURI`
+    FOREIGN KEY ()
+    REFERENCES `flower`.`Activity` ()
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `ActivityProviderURI`
+    FOREIGN KEY ()
+    REFERENCES `flower`.`Actor` ()
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`UserMapping`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`UserMapping` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`UserMapping` (
+  `UserURI` VARCHAR(255) NULL ,
+  `ActorURI` VARCHAR(255) NULL ,
+  CONSTRAINT `UserURI`
+    FOREIGN KEY (`UserURI` )
+    REFERENCES `flower`.`User` (`UserURI` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `ActorURI`
+    FOREIGN KEY ()
+    REFERENCES `flower`.`Actor` ()
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
