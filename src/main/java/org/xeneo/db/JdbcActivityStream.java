@@ -21,7 +21,7 @@ public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream
 	
 	// SQL queries
 	private static String GET_ACTIVITIES_BY_TASK_AND_CASE = "select * from ActivityView WHERE TaskURI = '%s' and CaseURI = '%s' ORDER BY CreationDate LIMIT 0, %s";
-	private static String GET_ACTIVITIES_BY_CASE = "select * from ActivityView WHERE c.CaseURI = '%s' ORDER BY a.CreationDate LIMIT 0, %s";
+	private static String GET_ACTIVITIES_BY_CASE = "select * from ActivityView WHERE CaseURI = '%s' ORDER BY CreationDate LIMIT 0, %s";
 
 	
 	public List<Activity> getActivities(String caseURI, String taskURI, int limit) {			

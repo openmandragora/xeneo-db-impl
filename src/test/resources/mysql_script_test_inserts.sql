@@ -87,6 +87,38 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `flower`.`ActivityProvider`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`ActivityProvider` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`ActivityProvider` (
+  `ActivityProviderURI` VARCHAR(255) NOT NULL ,
+  `ActivityProviderName` VARCHAR(255) NOT NULL ,
+  `ActivityProviderType` VARCHAR(255) NULL ,
+  PRIMARY KEY (`ActivityProviderURI`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`Actor`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`Actor` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`Actor` (
+  `ActorURI` VARCHAR(255) NOT NULL ,
+  `ActorName` VARCHAR(255) NULL ,
+  `ActivityProviderURI` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`ActorURI`) ,
+  INDEX `ActorActivityProviderURI` (`ActivityProviderURI` ASC) ,
+  CONSTRAINT `ActorActivityProviderURI`
+    FOREIGN KEY (`ActivityProviderURI` )
+    REFERENCES `flower`.`ActivityProvider` (`ActivityProviderURI` )
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `flower`.`Activity`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `flower`.`Activity` ;
@@ -94,22 +126,19 @@ DROP TABLE IF EXISTS `flower`.`Activity` ;
 CREATE  TABLE IF NOT EXISTS `flower`.`Activity` (
   `ActivityURI` VARCHAR(255) NOT NULL ,
   `CreationDate` DATETIME NOT NULL ,
-  `UserURI` VARCHAR(255) NOT NULL ,
+  `ActorURI` VARCHAR(255) NOT NULL ,
   `ActionURI` VARCHAR(255) NOT NULL ,
   `ObjectURI` VARCHAR(255) NOT NULL ,
   `TargetURI` VARCHAR(255) NULL ,
   `Description` TEXT NULL ,
-  `summary` VARCHAR(255) NULL ,
+  `Summary` VARCHAR(255) NULL ,
+  `ActivityProviderURI` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`ActivityURI`) ,
   UNIQUE INDEX `ActivityURI_UNIQUE` (`ActivityURI` ASC) ,
-  INDEX `UserURI` (`UserURI` ASC) ,
   INDEX `ActivityObject` (`ObjectURI` ASC) ,
   INDEX `ActivityTarget` (`TargetURI` ASC) ,
-  CONSTRAINT `UserURI`
-    FOREIGN KEY (`UserURI` )
-    REFERENCES `flower`.`User` (`UserURI` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+  INDEX `ActivityActor` (`ActorURI` ASC) ,
+  INDEX `ActivityActivityProviderURI` (`ActivityProviderURI` ASC) ,
   CONSTRAINT `ActivityObject`
     FOREIGN KEY (`ObjectURI` )
     REFERENCES `flower`.`Object` (`ObjectURI` )
@@ -119,6 +148,16 @@ CREATE  TABLE IF NOT EXISTS `flower`.`Activity` (
     FOREIGN KEY (`TargetURI` )
     REFERENCES `flower`.`Object` (`ObjectURI` )
     ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `ActivityActor`
+    FOREIGN KEY (`ActorURI` )
+    REFERENCES `flower`.`Actor` (`ActorURI` )
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `ActivityActivityProviderURI`
+    FOREIGN KEY (`ActivityProviderURI` )
+    REFERENCES `flower`.`ActivityProvider` (`ActivityProviderURI` )
+    ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
@@ -384,6 +423,63 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfigurationProperty` (
     ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `flower`.`PluginInstanceProperty`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`PluginInstanceProperty` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstanceProperty` (
+  `PluginInstanceID` INT NOT NULL ,
+  `Name` VARCHAR(255) NOT NULL ,
+  `Value` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`PluginInstanceID`, `Name`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`UserMapping`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`UserMapping` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`UserMapping` (
+  `UserURI` VARCHAR(255) NOT NULL ,
+  `ActorURI` VARCHAR(255) NOT NULL ,
+  CONSTRAINT `UserMappingUserURI`
+    FOREIGN KEY (`UserURI` )
+    REFERENCES `flower`.`User` (`UserURI` )
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `UserMappingActorURI`
+    FOREIGN KEY (`ActorURI` )
+    REFERENCES `flower`.`Actor` (`ActorURI` )
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Placeholder table for view `flower`.`ActivityView`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `flower`.`ActivityView` (`ActivityURI` INT, `CreationDate` INT, `ActorName` INT, `ActorURI` INT, `UserURI` INT, `ObjectName` INT, `ObjectTypeURI` INT, `ActionURI` INT, `TargetName` INT, `TargetTypeURI` INT, `Description` INT, `summary` INT, `ActivityProviderName` INT, `TaskURI` INT, `CaseURI` INT);
+
+-- -----------------------------------------------------
+-- View `flower`.`ActivityView`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `flower`.`ActivityView` ;
+DROP TABLE IF EXISTS `flower`.`ActivityView`;
+USE `flower`;
+CREATE  OR REPLACE VIEW ActivityView AS
+SELECT a.ActivityURI, a.CreationDate, act.ActorName, act.ActorURI, u.UserURI, o.Name ObjectName, o.ObjectTypeURI, a.ActionURI, t.Name TargetName, t.ObjectTypeURI TargetTypeURI, a.Description, a.summary, ap.ActivityProviderName, tc.TaskURI, tc.CaseURI
+from Activity a
+inner join Object o on a.ObjectURI = o.ObjectURI
+inner join Object t on a.TargetURI = t.ObjectURI
+inner join TaskContext tc on a.ActivityURI = tc.ActivityURI
+inner join ActivityProvider ap on a.ActivityProviderURI = ap.ActivityProviderURI
+inner join Actor act on a.ActorURI = act.ActorURI
+inner join UserMapping um on act.ActorURI = um.ActorURI
+inner join User u on um.UserURI = u.UserURI
+;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

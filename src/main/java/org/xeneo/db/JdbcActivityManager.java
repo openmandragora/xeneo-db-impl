@@ -26,11 +26,11 @@ public class JdbcActivityManager implements ActivityManager {
     private static String TASK_CONTEXT_BY_ACTIVITY_AND_CASE = "select * from `TaskContext` where ActivityURI = ? and CaseURI = ?";
     private static String TASK_CONTEXT_BY_ACTIVITY = "select * from `TaskContext` where ActivityURI = ?";
     private static String GET_ACTOR_BY_URI = "select count(*) from Actor where ActorURI = ?";
-    private static String UPDATE_ACTOR_BY_URI = "update Actor set ActorName = ?, set ActivityProviderURI = ? where ActorURI = ?";
-    private static String ADD_ACTOR = "insert into Actor (ActorURI, ActorName, ActivityProviderURI) values(?,?,?,?)";
+    private static String UPDATE_ACTOR_BY_URI = "update Actor set ActorName = ?, ActivityProviderURI = ? where ActorURI = ?";
+    private static String ADD_ACTOR = "insert into Actor (ActorURI, ActorName, ActivityProviderURI) values(?,?,?)";
     private static String GET_ACTIVITYPROVIDER_BY_URI = "select count(*) from ActivityProvider where ActivityProviderURI = ?";
-    private static String UPDATE_ACTIVITYPROVIDER_BY_URI = "update ActivityProvider set ActivityProviderName = ?, set ActivityProviderType = ? where ActivityProviderURI = ?";
-    private static String ADD_ACTIVITYPROVIDER = "insert into ActivityProvider (ActivityProviderURI, ActivityProviderName, ActivityProviderType";
+    private static String UPDATE_ACTIVITYPROVIDER_BY_URI = "update ActivityProvider set ActivityProviderName = ?, ActivityProviderType = ? where ActivityProviderURI = ?";
+    private static String ADD_ACTIVITYPROVIDER = "insert into ActivityProvider (ActivityProviderURI, ActivityProviderName, ActivityProviderType) values(?,?,?)";
 
     protected boolean isExistingObject(String objectURI) {
         if (jdbcTemplate.queryForInt(GET_OBJECT_BY_URI, objectURI) > 0) {
@@ -80,7 +80,7 @@ public class JdbcActivityManager implements ActivityManager {
         if (isExistingActivityProvider(ap.getActivityProviderURI())) {
             jdbcTemplate.update(UPDATE_ACTIVITYPROVIDER_BY_URI, ap.getActivityProviderName(), ap.getActivityProviderType(), ap.getActivityProviderURI());
         } else {
-            jdbcTemplate.update(ADD_ACTIVITYPROVIDER, ap.getActivityProviderURI(), ap.getActivityProviderName(), ap.getActivityProviderURI());
+            jdbcTemplate.update(ADD_ACTIVITYPROVIDER, ap.getActivityProviderURI(), ap.getActivityProviderName(), ap.getActivityProviderType());
         }
 
         // check if actor exists otherwise create one
