@@ -130,7 +130,7 @@ public class JdbcPluginManagerTest {
         
         PluginDescriptor p1 = pm.getPluginDescriptor(pds.get(0).getPluginURI());
         
-        logger.info(p1.getID() + " " + pds.get(0).getID());
+        logger.info(p1.getId() + " " + pds.get(0).getId());
         
         assertTrue(p1.getTitle().equals(pds.get(0).getTitle()));
         

@@ -44,10 +44,10 @@ public class JdbcPluginManager implements PluginManager {
         int i = jdbcTemplate.queryForInt(PLUGIN_EXISTS, descriptor.getPluginURI());
         if (i > 0) {
             logger.info("update Plugin: " + descriptor.getTitle());
-            jdbcTemplate.update(PLUGIN_UPDATE, descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getID(), descriptor.getPluginURI());
+            jdbcTemplate.update(PLUGIN_UPDATE, descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getId(), descriptor.getPluginURI());
         } else {
             logger.info("add Plugin: " + descriptor.getTitle());
-            jdbcTemplate.update(PLUGIN_ADD, descriptor.getPluginURI(), descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getID(), true);
+            jdbcTemplate.update(PLUGIN_ADD, descriptor.getPluginURI(), descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getId(), true);
         }
     }
 
@@ -73,7 +73,7 @@ public class JdbcPluginManager implements PluginManager {
                 pd.setPluginURI(rs.getString("PluginURI"));
                 pd.setPluginType(rs.getString("PluginType"));
                 pd.setTitle(rs.getString("Title"));
-                pd.setID(rs.getLong("BundleID"));
+                pd.setId(rs.getLong("BundleID"));
                 pd.setDescription(rs.getString("Description"));
                 pd.setPluginClass(rs.getString("Classname"));
 

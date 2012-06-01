@@ -46,19 +46,20 @@ public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream
 		                act.setDescription(rs.getString("Description"));
 		                
                                 ActivityProvider ap = new ActivityProvider();
-                                ap.setActivityProviderName(rs.getString("actp.ActivityProviderName"));
-                                ap.setActivityProviderType(rs.getString("actp.ActivityProviderType"));
+                                ap.setActivityProviderName(rs.getString("ActivityProviderName"));
+                                ap.setActivityProviderType(rs.getString("ActivityProviderType"));
                                 ap.setActivityProviderURI(rs.getString("ActivityProviderURI"));
                                 
                                 Actor acto = new Actor();
-                                acto.setActorName(rs.getString("ac.ActorName"));
+                                acto.setActorName(rs.getString("ActorName"));
                                 //User mapping with actor name!!! HOWTO?                                
                                 //acto.setActorURI(rs.getString("ac.ActorURI"));
-                                acto.setActivityProviderURI(rs.getString("actp.ActivityProviderURI"));
+                                acto.setActivityProviderURI(rs.getString("ActivityProviderURI"));
+                                acto.setActorURI(rs.getString("ActorURI"));
                                 
 		                Object obj = new Object();
-		                obj.setObjectName(rs.getString("o.Name"));
-		                obj.setObjectTypeURI(rs.getString("o.ObjectTypeURI"));
+		                obj.setObjectName(rs.getString("ObjectName"));
+		                obj.setObjectTypeURI(rs.getString("ObjectTypeURI"));
 		                obj.setObjectURI(rs.getString("ObjectURI"));
 		                act.setObject(obj);
 		                
@@ -66,8 +67,8 @@ public class JdbcActivityStream extends JdbcDaoSupport implements ActivityStream
 		                if (!targetURI.isEmpty()) {
 		                	Object tar = new Object();
 		                	tar.setObjectURI(targetURI);
-		                	tar.setObjectName(rs.getString("t.Name"));
-		                	tar.setObjectTypeURI(rs.getString("t.ObjectTypeURI"));
+		                	tar.setObjectName(rs.getString("TargetName"));
+		                	tar.setObjectTypeURI(rs.getString("TargetTypeURI"));
 		                	act.setTarget(tar);
 		                }		                
 		                
