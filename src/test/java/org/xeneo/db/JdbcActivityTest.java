@@ -4,39 +4,24 @@
  */
 package org.xeneo.db;
 
-import org.xeneo.db.JdbcCaseEngine;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Collection;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-
-import org.xeneo.core.activity.Activity;
-import org.xeneo.core.activity.Object;
-import org.xeneo.core.task.Case;
-import org.xeneo.core.task.CaseEngine;
-import org.xeneo.core.task.CaseType;
-import org.xeneo.core.task.Task;
-
-import java.util.Calendar;
+import java.util.*;
+import org.junit.After;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.xeneo.core.activity.Activity;
 import org.xeneo.core.activity.ActivityProvider;
 import org.xeneo.core.activity.Actor;
-import org.xeneo.core.plugin.activity.ActivityPlugin;
+import org.xeneo.core.activity.Object;
+import org.xeneo.core.task.Case;
+import org.xeneo.core.task.CaseType;
+import org.xeneo.core.task.Task;
 
 /**
  *
@@ -134,25 +119,38 @@ public class JdbcActivityTest {
             
             manager.addActivity(acts.get(i), context);
         }
-
+/*
         Set<String> cases = context.keySet();
 
         Iterator<String> ci = cases.iterator();
         while (ci.hasNext()) {
             String c = ci.next();
             List<Activity> as = stream.getActivities(c, n);
+            
 
             for (int j = 0; j < n; j++) {
                 Activity a = as.get(j);
-
                 assertEquals(a.getActor().getActorURI(), "http://xeneo.org/user/markus/ActivityProviderName: "+j+"/ActorName: "+j);
 
             }
-
         }
-
+        */
     }
-
+    
+    @Test
+    public void testDBActivities(){
+        
+    }
+    
+    @Test
+    public void testActivities(){
+        List<Activity> activityList = createRandomActivities("blalblalba", n);
+        for (int j = 0; j<n;j++){
+            Activity a = activityList.get(j);
+            assertEquals(a.getActivityURI(),"http://test.xeneo.org/blalblalba/activity/"+j);
+            // more tests ...
+        }
+    }
     @Test
     public void testTaskContext() {
 
@@ -177,19 +175,19 @@ public class JdbcActivityTest {
 
         List<Activity> l2 = stream.getActivities(cs1.getCaseURI(), n);
         assertTrue(l2.size() < 1);
-
+        
         for (int i = 0; i < n; i++) {
             manager.addTaskContexts(acts.get(i).getActivityURI(), cs1.getCaseURI(), tasks);
         }
-
-        List<Activity> l3 = stream.getActivities(cs1.getCaseURI(), n);
-        assertTrue(l3.size() == n);
+        //System.out.println(stream.getActivities(cs1.getCaseURI(), n).size());
+        assertTrue(stream.getActivities(cs1.getCaseURI(), n).size() == n);
+        //assertTrue(l3.size() == n);
         
-        l3 = stream.getActivities(cs1.getCaseURI(), t1.getTaskURI(), n);
-        assertTrue(l3.size() == n);
+        assertTrue(stream.getActivities(cs1.getCaseURI(), t1.getTaskURI(), n).size() == n);
+        //assertTrue(l3.size() == n);
         
-        l3 = stream.getActivities(cs1.getCaseURI(), t2.getTaskURI(), n);
-        assertTrue(l3.size() == n);
+        assertTrue(stream.getActivities(cs1.getCaseURI(), t2.getTaskURI(), n).size() == n);
+        //assertTrue(l3.size() == n);
         
     }
 
@@ -229,7 +227,7 @@ public class JdbcActivityTest {
 
         // should be the same
         assertEquals(l1.size(), n);
-
+        
         manager.removeTaskContexts(l1.get(0).getActivityURI(), map);
 
         List<Activity> l2 = stream.getActivities(cs1.getCaseURI(),

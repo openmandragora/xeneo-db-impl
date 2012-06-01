@@ -22,7 +22,7 @@ public class PluginUtil {
             pd.setDescription("Plugin Description " + j);
             pd.setPluginURI("http://test.com/plugin/" + Calendar.getInstance().getTimeInMillis() + "/" + j);
             pd.setPluginType(types[j % types.length]);
-            pd.setID(Calendar.getInstance().getTimeInMillis());
+            pd.setId(Calendar.getInstance().getTimeInMillis());
             pd.setPluginClass("org.xeneo.Plugin" + j);
             list.add(pd);
         }

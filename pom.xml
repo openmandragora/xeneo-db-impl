@@ -102,7 +102,7 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>                
+                <artifactId>maven-pmd-plugin</artifactId>
             </plugin>
         </plugins>
     </reporting>
@@ -204,5 +204,4 @@
             <url>http://www.wi.fh-kufstein.ac.at:40700/nexus/content/repositories/xeneo/</url>
         </snapshotRepository>
     </distributionManagement>
-</project>
 </project>
