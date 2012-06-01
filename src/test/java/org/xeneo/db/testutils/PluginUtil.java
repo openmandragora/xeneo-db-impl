@@ -1,9 +1,6 @@
 package org.xeneo.db.testutils;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import org.xeneo.core.plugin.PluginConfiguration;
 import org.xeneo.core.plugin.PluginDescriptor;
 
@@ -14,6 +11,15 @@ import org.xeneo.core.plugin.PluginDescriptor;
 public class PluginUtil {
 
     public List<PluginDescriptor> createRandomPlugins(int i, String[] types) {
+        Set<String> props = new HashSet<String>();
+        
+        // Some Test Properties
+        props.add("Name");
+        props.add("FeedUrl");
+        props.add("Bonsai");
+        props.add("JoshiUrl");
+        props.add("Blub");        
+        
         List<PluginDescriptor> list = new ArrayList<PluginDescriptor>();
         for (int j = 0; j < i; j++) {
 
@@ -22,8 +28,14 @@ public class PluginUtil {
             pd.setDescription("Plugin Description " + j);
             pd.setPluginURI("http://test.com/plugin/" + Calendar.getInstance().getTimeInMillis() + "/" + j);
             pd.setPluginType(types[j % types.length]);
-            pd.setID(Calendar.getInstance().getTimeInMillis());
+            pd.setId(Calendar.getInstance().getTimeInMillis());
             pd.setPluginClass("org.xeneo.Plugin" + j);
+                      
+            Iterator<String> it = props.iterator();
+            while (it.hasNext()) {
+                pd.addProperty(it.next());
+            }         
+            
             list.add(pd);
         }
 
@@ -36,8 +48,8 @@ public class PluginUtil {
         for (int j = 0; j < i; j++) {
 
             PluginConfiguration pc = new PluginConfiguration();
-            pc.setOwnerURI(ownerURI);
-            pc.setPluginURI(pluginURI);
+            
+           
 
             Properties props = new Properties();
             props.setProperty("testProperty1" + j, "something1");
@@ -45,7 +57,7 @@ public class PluginUtil {
             props.setProperty("testProperty3" + j, "something3");
             props.setProperty("testProperty4" + j, "something4");
 
-            pc.setConfigurationProperties(props);
+            // pc.setConfigurationProperties(props);
             
             pcs.add(pc);
         }

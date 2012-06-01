@@ -6,6 +6,8 @@ package org.xeneo.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,22 +35,40 @@ public class JdbcPluginManager implements PluginManager {
     private static final String PLUGIN_UPDATE = "update Plugin set PluginType=?, Title=?, Description=?, Classname=?,BundleID=?, Active=1 where PluginURI = ?";
     private static final String PLUGIN_DEACTIVATE = "update Plugin set Active=0 where PluginURI = ?";
     private static final String PLUGIN_LIST = "select PluginURI,PluginType,Title,Description,Classname,BundleID from Plugin where Active=1 and PluginType in(%s)";
-
+    private static final String PLUGIN_PROPERTIES_DELETE = "delete from pluginproperty where PluginURI = ?";
+    private static final String PLUGIN_PROPERTIES_ADD = "insert into pluginproperty (PluginURI,Name) values %s";
+    private static final String PLUGIN_PROPERTIES_SELECT = "select * from PluginProperty where PluginURI = ?";
+        
     public void init() {
         logger.info("PluginManager initialized.");
     }
     
     public void addPlugin(PluginDescriptor descriptor) {
-        logger.info("Try to add plugin with URI: " + descriptor.getPluginURI() + " and name: " + descriptor.getTitle());
-                
-        int i = jdbcTemplate.queryForInt(PLUGIN_EXISTS, descriptor.getPluginURI());
-        if (i > 0) {
+        logger.info("Try to add plugin with URI: " + descriptor.getPluginURI() + " and name: " + descriptor.getTitle());       
+        if (jdbcTemplate.queryForInt(PLUGIN_EXISTS, descriptor.getPluginURI()) > 0) {
             logger.info("update Plugin: " + descriptor.getTitle());
             jdbcTemplate.update(PLUGIN_UPDATE, descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getId(), descriptor.getPluginURI());
+            addPluginProperties(descriptor.getPluginURI(),descriptor.getProperties(),true);
         } else {
             logger.info("add Plugin: " + descriptor.getTitle());
             jdbcTemplate.update(PLUGIN_ADD, descriptor.getPluginURI(), descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getId(), true);
+            addPluginProperties(descriptor.getPluginURI(),descriptor.getProperties(),false);
         }
+    }
+    
+    public void addPluginProperties(String pluginURI, Collection<String> props, boolean preDelete) {
+        if (preDelete) {
+            jdbcTemplate.update(PLUGIN_PROPERTIES_DELETE, pluginURI);
+        }
+        
+        Iterator<String> it = props.iterator();
+        String values = "";
+        while (it.hasNext()) {
+            values += "('" + pluginURI + "','" + it.next() + "')";
+            values += it.hasNext() ? "," : "";
+        }
+        
+        jdbcTemplate.update(String.format(PLUGIN_PROPERTIES_ADD, values));
     }
 
     public void deactivatePlugin(String pluginURI) {
@@ -56,6 +76,7 @@ public class JdbcPluginManager implements PluginManager {
         jdbcTemplate.update(PLUGIN_DEACTIVATE, pluginURI);
     }
 
+    // TODO: get also Properties for the Plugins
     public List<PluginDescriptor> listAvailablePlugins(String[] types) {
         String t = "";
         for (int i = 0; i < types.length; i++) {

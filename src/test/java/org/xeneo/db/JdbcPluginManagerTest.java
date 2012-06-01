@@ -1,7 +1,5 @@
 package org.xeneo.db;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
@@ -48,10 +46,12 @@ public class JdbcPluginManagerTest {
     
     @Before
     public void setUp() {
+        
     }
     
     @After
     public void tearDown() {
+        
     }
     
     @Test
@@ -130,7 +130,7 @@ public class JdbcPluginManagerTest {
         
         PluginDescriptor p1 = pm.getPluginDescriptor(pds.get(0).getPluginURI());
         
-        logger.info(p1.getID() + " " + pds.get(0).getID());
+        logger.info(p1.getId() + " " + pds.get(0).getId());
         
         assertTrue(p1.getTitle().equals(pds.get(0).getTitle()));
         

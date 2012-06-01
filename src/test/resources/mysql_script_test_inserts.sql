@@ -465,6 +465,24 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `flower`.`PluginProperty`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`PluginProperty` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginProperty` (
+  `PluginURI` VARCHAR(255) NOT NULL ,
+  `Name` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`PluginURI`, `Name`) ,
+  INDEX `p2pp` (`PluginURI` ASC) ,
+  CONSTRAINT `p2pp`
+    FOREIGN KEY (`PluginURI` )
+    REFERENCES `flower`.`Plugin` (`PluginURI` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Placeholder table for view `flower`.`ActivityView`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `flower`.`ActivityView` (`ActivityURI` INT, `CreationDate` INT, `ActorName` INT, `ActorURI` INT, `UserURI` INT, `ObjectName` INT, `ObjectTypeURI` INT, `ActionURI` INT, `TargetName` INT, `TargetTypeURI` INT, `Description` INT, `summary` INT, `ActivityProviderName` INT, `TaskURI` INT, `CaseURI` INT);

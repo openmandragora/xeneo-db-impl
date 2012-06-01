@@ -64,7 +64,7 @@ public class JdbcActivityTest {
     @After
     public void tearDown() {
     }
-
+    
     @Test
     public void testActivityCreation() {
         List<Activity> acts = this.createRandomActivities("ctest", n);
@@ -76,7 +76,7 @@ public class JdbcActivityTest {
             if (!manager.isExistingActivity(a.getActivityURI())) {
                 manager.addActivity(a);
             }
-        }
+        }      
     }
     
     public String trim(String in) {
