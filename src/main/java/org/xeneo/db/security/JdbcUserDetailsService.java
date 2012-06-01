@@ -19,19 +19,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 public class JdbcUserDetailsService extends JdbcDaoSupport implements UserDetailsService {
 
-    private static String GET_USER_BY_USERNAME = "select * from `User` where UserName = ?";
+    private static String GET_USER_BY_USERNAME = "select * from `User` where UserURI = ?";
+    
 
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<JdbcUser> users = loadUsersByUsername(username);
+    public UserDetails loadUserByUsername(String userURI) throws UsernameNotFoundException {
+        List<JdbcUser> users = loadUsersByUsername(userURI);
         if (users.size() < 1) {
-            throw new UsernameNotFoundException("There is no user with Username: " + username + " registered.");
+            throw new UsernameNotFoundException("There is no user with Username: " + userURI + " registered.");
         }
         
         return users.get(0);       
     }
 
-    private List<JdbcUser> loadUsersByUsername(String username) {
-        return getJdbcTemplate().query(GET_USER_BY_USERNAME, new String[]{username}, new RowMapper<JdbcUser>() {
+    private List<JdbcUser> loadUsersByUsername(String userURI) {
+        return getJdbcTemplate().query(GET_USER_BY_USERNAME, new String[]{userURI}, new RowMapper<JdbcUser>() {
             public JdbcUser mapRow(ResultSet rs, int rowNum) throws SQLException {
                 String username = rs.getString("UserName");
                 String password = rs.getString("Password");

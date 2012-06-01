@@ -49,13 +49,12 @@ DROP TABLE IF EXISTS `flower`.`User` ;
 
 CREATE  TABLE IF NOT EXISTS `flower`.`User` (
   `UserURI` VARCHAR(255) NOT NULL ,
-  `UserName` VARCHAR(100) NOT NULL ,
   `FirstName` VARCHAR(55) NOT NULL ,
   `LastName` VARCHAR(55) NOT NULL ,
   `Password` VARCHAR(100) NOT NULL ,
+  `UserName` VARCHAR(45) NULL ,
   PRIMARY KEY (`UserURI`) ,
-  UNIQUE INDEX `UserURI_UNIQUE` (`UserURI` ASC) ,
-  UNIQUE INDEX `UserName_UNIQUE` (`UserName` ASC) )
+  UNIQUE INDEX `UserURI_UNIQUE` (`UserURI` ASC) )
 ENGINE = InnoDB;
 
 
@@ -454,20 +453,20 @@ CREATE  TABLE IF NOT EXISTS `flower`.`UserMapping` (
   CONSTRAINT `UserMappingUserURI`
     FOREIGN KEY (`UserURI` )
     REFERENCES `flower`.`User` (`UserURI` )
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT,
   CONSTRAINT `UserMappingActorURI`
     FOREIGN KEY (`ActorURI` )
     REFERENCES `flower`.`Actor` (`ActorURI` )
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Placeholder table for view `flower`.`ActivityView`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `flower`.`ActivityView` (`ActivityURI` INT, `CreationDate` INT, `ActorName` INT, `ActorURI` INT, `UserURI` INT, `ObjectName` INT, `ObjectTypeURI` INT, `ActionURI` INT, `TargetName` INT, `TargetTypeURI` INT, `Description` INT, `summary` INT, `ActivityProviderName` INT, `TaskURI` INT, `CaseURI` INT);
+CREATE TABLE IF NOT EXISTS `flower`.`ActivityView` (`ActivityURI` INT, `CreationDate` INT, `ActorURI` INT, `ActionURI` INT, `ActorName` INT, `ObjectURI` INT, `ObjectName` INT, `ObjectTypeURI` INT, `TargetURI` INT, `TargetName` INT, `TargetTypeURI` INT, `ActivityProviderURI` INT, `ActivityProviderName` INT, `ActivityProviderType` INT, `Description` INT, `Summary` INT, `TaskURI` INT, `CaseURI` INT);
 
 -- -----------------------------------------------------
 -- View `flower`.`ActivityView`
@@ -476,15 +475,18 @@ DROP VIEW IF EXISTS `flower`.`ActivityView` ;
 DROP TABLE IF EXISTS `flower`.`ActivityView`;
 USE `flower`;
 CREATE  OR REPLACE VIEW ActivityView AS
-SELECT a.ActivityURI, a.CreationDate, act.ActorName, act.ActorURI, u.UserURI, o.Name ObjectName, o.ObjectTypeURI, a.ActionURI, t.Name TargetName, t.ObjectTypeURI TargetTypeURI, a.Description, a.summary, ap.ActivityProviderName, tc.TaskURI, tc.CaseURI
+SELECT a.ActivityURI, a.CreationDate,
+a.ActorURI, a.ActionURI, act.ActorName,
+a.ObjectURI, o.Name AS ObjectName, o.ObjectTypeURI,
+t.ObjectURI AS TargetURI, t.Name AS TargetName, t.ObjectTypeURI AS TargetTypeURI,
+a.ActivityProviderURI, ap.ActivityProviderName, ap.ActivityProviderType,
+a.Description, a.Summary, tc.TaskURI, tc.CaseURI
 from Activity a
+inner join Actor act on a.ActorURI = act.ActorURI
 inner join Object o on a.ObjectURI = o.ObjectURI
 inner join Object t on a.TargetURI = t.ObjectURI
 inner join TaskContext tc on a.ActivityURI = tc.ActivityURI
 inner join ActivityProvider ap on a.ActivityProviderURI = ap.ActivityProviderURI
-inner join Actor act on a.ActorURI = act.ActorURI
-inner join UserMapping um on act.ActorURI = um.ActorURI
-inner join User u on um.UserURI = u.UserURI
 ;
 
 
@@ -515,6 +517,6 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `flower`;
-INSERT INTO `flower`.`User` (`UserURI`, `UserName`, `FirstName`, `LastName`, `Password`) VALUES ('http://stefanhuber.at/user/stefan', 'Stefan.Huber', 'Stefan', 'Huber', 'blub');
+INSERT INTO `flower`.`User` (`UserURI`, `FirstName`, `LastName`, `Password`, `UserName`) VALUES ('http://stefanhuber.at/user/stefan', 'Stefan', 'Huber', 'blub', NULL);
 
 COMMIT;

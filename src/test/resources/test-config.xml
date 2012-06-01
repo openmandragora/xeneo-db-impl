@@ -66,11 +66,20 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
     
+    <bean id="userManager" class="org.xeneo.db.security.JdbcUserManager">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
+    
+    <bean id="mapper" class="org.xeneo.db.services.JdbcUserMapping">
+        <property name ="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
     <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <property name="userDetailsService" ref="jdbcUserDetailsService"/>      
     </bean>
     
-    <bean id="userServices" class="org.xeneo.db.security.JdbcUserServices">
+    <bean id="userServices" class="org.xeneo.db.services.JdbcUserServices">
         <property name="dataSource" ref="dataSource" />
     </bean>
     
