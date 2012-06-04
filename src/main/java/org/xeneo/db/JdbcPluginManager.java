@@ -49,11 +49,6 @@ public class JdbcPluginManager implements PluginManager {
         if (jdbcTemplate.queryForInt(PLUGIN_EXISTS, descriptor.getPluginURI()) > 0) {           
             logger.info("update Plugin: " + descriptor.getTitle());
             jdbcTemplate.update(PLUGIN_UPDATE, descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getId(), descriptor.getPluginURI());
-            //addPluginProperties(descriptor.getPluginURI(),,true);
-        } else {
-            logger.info("add Plugin: " + descriptor.getTitle());
-            jdbcTemplate.update(PLUGIN_ADD, descriptor.getPluginURI(), descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getId(), true);
-            //addPluginProperties(descriptor.getPluginURI(),descriptor.getProperties(),false);
         }
     }
     
