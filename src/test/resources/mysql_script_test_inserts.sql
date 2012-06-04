@@ -329,27 +329,9 @@ CREATE  TABLE IF NOT EXISTS `flower`.`Plugin` (
   `Active` TINYINT(1) NOT NULL ,
   `PluginType` VARCHAR(255) NOT NULL ,
   `BundleID` MEDIUMTEXT NOT NULL ,
+  `PluginPropertyID` INT NOT NULL ,
   PRIMARY KEY (`PluginURI`) ,
   UNIQUE INDEX `PluginURI_UNIQUE` (`PluginURI` ASC) )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `flower`.`PluginInstance`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `flower`.`PluginInstance` ;
-
-CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstance` (
-  `PluginURI` VARCHAR(255) NOT NULL ,
-  `OwnerURI` VARCHAR(255) NOT NULL ,
-  `Active` TINYINT(1) NOT NULL ,
-  PRIMARY KEY (`PluginURI`, `OwnerURI`) ,
-  INDEX `PluginType` (`PluginURI` ASC) ,
-  CONSTRAINT `PluginType`
-    FOREIGN KEY (`PluginURI` )
-    REFERENCES `flower`.`Plugin` (`PluginURI` )
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -362,12 +344,32 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfiguration` (
   `PluginConfigurationID` INT NOT NULL AUTO_INCREMENT ,
   `PluginURI` VARCHAR(255) NOT NULL ,
   `OwnerURI` VARCHAR(255) NOT NULL ,
-  PRIMARY KEY (`PluginConfigurationID`, `PluginURI`, `OwnerURI`) ,
-  INDEX `InstanceReference` (`PluginURI` ASC, `OwnerURI` ASC) ,
-  CONSTRAINT `InstanceReference`
-    FOREIGN KEY (`PluginURI` , `OwnerURI` )
-    REFERENCES `flower`.`PluginInstance` (`PluginURI` , `OwnerURI` )
-    ON DELETE CASCADE
+  PRIMARY KEY (`PluginConfigurationID`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `flower`.`PluginInstance`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`PluginInstance` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstance` (
+  `PluginInstanceID` INT NOT NULL AUTO_INCREMENT ,
+  `PluginURI` VARCHAR(255) NOT NULL ,
+  `Active` TINYINT(1) NOT NULL ,
+  `PluginConfigurationID` INT NULL ,
+  PRIMARY KEY (`PluginInstanceID`) ,
+  INDEX `PluginConfiguration` (`PluginConfigurationID` ASC) ,
+  INDEX `PluginURI` (`PluginURI` ASC) ,
+  CONSTRAINT `PluginConfiguration`
+    FOREIGN KEY (`PluginConfigurationID` )
+    REFERENCES `flower`.`PluginConfiguration` (`PluginConfigurationID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `PluginURI`
+    FOREIGN KEY (`PluginURI` )
+    REFERENCES `flower`.`Plugin` (`PluginURI` )
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -409,10 +411,11 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `flower`.`PluginConfigurationProperty` ;
 
 CREATE  TABLE IF NOT EXISTS `flower`.`PluginConfigurationProperty` (
-  `Name` VARCHAR(255) NOT NULL ,
+  `PluginConfigurationPropertyID` VARCHAR(255) NOT NULL ,
   `PluginConfigurationID` INT NOT NULL ,
   `Value` VARCHAR(255) NOT NULL ,
-  PRIMARY KEY (`Name`, `PluginConfigurationID`) ,
+  `Name` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`PluginConfigurationPropertyID`) ,
   INDEX `PConfig` (`PluginConfigurationID` ASC) ,
   CONSTRAINT `PConfig`
     FOREIGN KEY (`PluginConfigurationID` )
@@ -423,21 +426,46 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `flower`.`PluginProperty`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`PluginProperty` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginProperty` (
+  `PluginPropertyID` INT NOT NULL AUTO_INCREMENT ,
+  `Name` VARCHAR(255) NOT NULL ,
+  `Type` VARCHAR(255) NOT NULL ,
+  `PluginURI` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`PluginPropertyID`) ,
+  INDEX `PluginFK` (`PluginURI` ASC) ,
+  CONSTRAINT `PluginFK`
+    FOREIGN KEY (`PluginURI` )
+    REFERENCES `flower`.`Plugin` (`PluginURI` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `flower`.`PluginInstanceProperty`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `flower`.`PluginInstanceProperty` ;
 
 CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstanceProperty` (
-  `Name` VARCHAR(255) NOT NULL ,
-  `Value` VARCHAR(255) NOT NULL ,
-  `PluginURI` VARCHAR(255) NOT NULL ,
-  `OwnerURI` VARCHAR(255) NOT NULL ,
-  PRIMARY KEY (`Name`, `PluginURI`, `OwnerURI`) ,
-  INDEX `PI2PIP` (`PluginURI` ASC, `OwnerURI` ASC) ,
-  CONSTRAINT `PI2PIP`
-    FOREIGN KEY (`PluginURI` , `OwnerURI` )
-    REFERENCES `flower`.`PluginInstance` (`PluginURI` , `OwnerURI` )
-    ON DELETE CASCADE
+  `PluginInstancePropertyID` INT NOT NULL ,
+  `PluginInstanceID` INT NOT NULL ,
+  `PluginPropertyID` INT NOT NULL ,
+  INDEX `PluginInstance` (`PluginInstanceID` ASC) ,
+  PRIMARY KEY (`PluginInstancePropertyID`) ,
+  INDEX `PluginProperty` (`PluginPropertyID` ASC) ,
+  CONSTRAINT `PluginInstance`
+    FOREIGN KEY (`PluginInstanceID` )
+    REFERENCES `flower`.`PluginInstance` (`PluginInstanceID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `PluginProperty`
+    FOREIGN KEY (`PluginPropertyID` )
+    REFERENCES `flower`.`PluginProperty` (`PluginPropertyID` )
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -464,9 +492,32 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `flower`.`PluginInstanceData`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`PluginInstanceData` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstanceData` (
+  `PluginInstancePropertyID` INT NOT NULL ,
+  `Value` VARCHAR(255) NULL ,
+  PRIMARY KEY (`PluginInstancePropertyID`) ,
+  INDEX `PluginInstanceProperty` (`PluginInstancePropertyID` ASC) ,
+  CONSTRAINT `PluginInstanceProperty`
+    FOREIGN KEY (`PluginInstancePropertyID` )
+    REFERENCES `flower`.`PluginInstanceProperty` (`PluginInstancePropertyID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Placeholder table for view `flower`.`ActivityView`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `flower`.`ActivityView` (`ActivityURI` INT, `CreationDate` INT, `ActorURI` INT, `ActionURI` INT, `ActorName` INT, `ObjectURI` INT, `ObjectName` INT, `ObjectTypeURI` INT, `TargetURI` INT, `TargetName` INT, `TargetTypeURI` INT, `ActivityProviderURI` INT, `ActivityProviderName` INT, `ActivityProviderType` INT, `Description` INT, `Summary` INT, `TaskURI` INT, `CaseURI` INT);
+
+-- -----------------------------------------------------
+-- Placeholder table for view `flower`.`PluginInstanceDataView`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `flower`.`PluginInstanceDataView` (`PluginInstancePropertyID` INT, `PluginInstanceID` INT, `PluginPropertyID` INT, `Value` INT, `Active` INT, `PluginConfigurationID` INT, `Name` INT, `Type` INT, `PluginURI` INT);
 
 -- -----------------------------------------------------
 -- View `flower`.`ActivityView`
@@ -488,6 +539,19 @@ inner join Object t on a.TargetURI = t.ObjectURI
 inner join TaskContext tc on a.ActivityURI = tc.ActivityURI
 inner join ActivityProvider ap on a.ActivityProviderURI = ap.ActivityProviderURI
 ;
+
+-- -----------------------------------------------------
+-- View `flower`.`PluginInstanceDataView`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `flower`.`PluginInstanceDataView` ;
+DROP TABLE IF EXISTS `flower`.`PluginInstanceDataView`;
+USE `flower`;
+CREATE  OR REPLACE VIEW PluginInstanceDataView AS
+SELECT PiP.PluginInstancePropertyID, PiP.PluginInstanceID, Pip.PluginPropertyID, PiD.Value, PI.PluginInstanceID, PI.Active, PI.PluginConfigurationID, PP.PluginPropertyID, PP.Name, Type, COALESCE(PP.PluginURI,PI.PluginURI) AS PluginURI
+FROM PluginInstanceProperty PiP
+Left Join PluginInstanceData PiD ON PiP.PluginInstancePropertyID = PiD.PluginInstancePropertyID
+Left Join PluginInstance PI ON PI.PluginInstanceID = PiP.PluginInstanceID
+Left Join PluginProperty PP ON PP.PluginPropertyID = PiP.PluginPropertyID;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
