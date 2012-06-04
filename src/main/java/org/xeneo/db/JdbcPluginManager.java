@@ -31,8 +31,8 @@ public class JdbcPluginManager implements PluginManager {
     
     private static final String PLUGIN_EXISTS = "select count(*) from Plugin where PluginURI = ?";
     private static final String PLUGIN_SELECT = "select * from Plugin where PluginURI = %s";
-    private static final String PLUGIN_ADD = "insert into Plugin (PluginURI,PluginType,Title,Description,Classname,BundleID,Active) values (?,?,?,?,?,?,?)";
-    private static final String PLUGIN_UPDATE = "update Plugin set PluginType=?, Title=?, Description=?, Classname=?,BundleID=?, Active=1 where PluginURI = ?";
+    private static final String PLUGIN_ADD = "insert into Plugin (PluginURI,PluginType,Title,Description,Classname,BundleID,Active, PluginPropertyID) values (?,?,?,?,?,?,?,?)";
+    private static final String PLUGIN_UPDATE = "update Plugin set PluginType=?, Title=?, Description=?, Classname=?,BundleID=?, Active=1, PluginPropertyID=? where PluginURI = ?";
     private static final String PLUGIN_DEACTIVATE = "update Plugin set Active=0 where PluginURI = ?";
     private static final String PLUGIN_LIST = "select PluginURI,PluginType,Title,Description,Classname,BundleID from Plugin where Active=1 and PluginType in(%s)";
     private static final String PLUGIN_PROPERTIES_DELETE = "delete from pluginproperty where PluginURI = ?";
@@ -40,6 +40,18 @@ public class JdbcPluginManager implements PluginManager {
     private static final String PLUGIN_PROPERTIES_SELECT = "select * from PluginProperty where PluginURI = ?";
     
     // TODO: FIX fully...
+    private static final String PLUGIN_LIST2 = "select PluginURI,PluginType,Title,Description,Classname,BundleID, PluginPropertyID from Plugin where Active=1 and PluginType in(%s)";
+    private static final String PLUGIN_LIST_INSTANCE_PROPERTY_VALUE = "SELECT P.PluginURI, P.Title, P.Description, P.Classname, P.Active, P.PluginType, P.BundleID, PiDv.PluginInstanceID, PiDv.Active, PiDv.PluginConfigurationID, PiDv.PluginPropertyID, PiDv.PluginInstancePropertyID, PiDv.Name, PiDv.Type, PiDv.Value FROM Plugin PLEFT JOIN PluginInstanceDataView PiDv ON P.PluginPropertyID = PiDv.PluginPropertyID WHERE PluginURI = ?";
+    
+    public void init() {
+        logger.info("PluginManager initialized.");
+    }
+    
+    public void listPluginInstancePropertyValue(String PluginURI){
+        
+    }
+    
+
     public void addPlugin(PluginDescriptor descriptor) {
         logger.info("Try to add plugin with URI: " + descriptor.getPluginURI() + " and name: " + descriptor.getTitle());       
         
@@ -48,7 +60,14 @@ public class JdbcPluginManager implements PluginManager {
         
         if (jdbcTemplate.queryForInt(PLUGIN_EXISTS, descriptor.getPluginURI()) > 0) {           
             logger.info("update Plugin: " + descriptor.getTitle());
+
             jdbcTemplate.update(PLUGIN_UPDATE, descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getId(), descriptor.getPluginURI());
+
+            jdbcTemplate.update(PLUGIN_UPDATE, descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getId(), 2, descriptor.getPluginURI());
+        } else {
+            logger.info("add Plugin: " + descriptor.getTitle());
+            jdbcTemplate.update(PLUGIN_ADD, descriptor.getPluginURI(), descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), 2, descriptor.getId(), true);
+
         }
     }
     
@@ -94,6 +113,7 @@ public class JdbcPluginManager implements PluginManager {
                 pd.setId(rs.getLong("BundleID"));
                 pd.setDescription(rs.getString("Description"));
                 pd.setPluginClass(rs.getString("Classname"));
+                pd.setPluginPropertyID(rs.getInt("PluginPropertyID"));
 
                 return pd;
             }
