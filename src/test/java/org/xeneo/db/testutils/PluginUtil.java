@@ -3,6 +3,7 @@ package org.xeneo.db.testutils;
 import java.util.*;
 import org.xeneo.core.plugin.PluginConfiguration;
 import org.xeneo.core.plugin.PluginDescriptor;
+import org.xeneo.core.plugin.PluginType;
 
 /**
  *
@@ -10,7 +11,7 @@ import org.xeneo.core.plugin.PluginDescriptor;
  */
 public class PluginUtil {
 
-    public List<PluginDescriptor> createRandomPlugins(int i, String[] types) {
+    public List<PluginDescriptor> createRandomPlugins(int i, PluginType[] types) {
         Set<String> props = new HashSet<String>();
         
         // Some Test Properties
@@ -19,7 +20,7 @@ public class PluginUtil {
         props.add("Bonsai");
         props.add("JoshiUrl");
         props.add("Blub");        
-        
+        /*
         List<PluginDescriptor> list = new ArrayList<PluginDescriptor>();
         for (int j = 0; j < i; j++) {
 
@@ -38,8 +39,8 @@ public class PluginUtil {
             
             list.add(pd);
         }
-
-        return list;
+*/
+        return null;
     }
 
     public List<PluginConfiguration> createRandomPluginConfigurations(int i, String pluginURI, String ownerURI) {

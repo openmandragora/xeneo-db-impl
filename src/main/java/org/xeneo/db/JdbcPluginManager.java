@@ -38,21 +38,22 @@ public class JdbcPluginManager implements PluginManager {
     private static final String PLUGIN_PROPERTIES_DELETE = "delete from pluginproperty where PluginURI = ?";
     private static final String PLUGIN_PROPERTIES_ADD = "insert into pluginproperty (PluginURI,Name) values %s";
     private static final String PLUGIN_PROPERTIES_SELECT = "select * from PluginProperty where PluginURI = ?";
-        
-    public void init() {
-        logger.info("PluginManager initialized.");
-    }
     
+    // TODO: FIX fully...
     public void addPlugin(PluginDescriptor descriptor) {
         logger.info("Try to add plugin with URI: " + descriptor.getPluginURI() + " and name: " + descriptor.getTitle());       
-        if (jdbcTemplate.queryForInt(PLUGIN_EXISTS, descriptor.getPluginURI()) > 0) {
+        
+        Collection<String> properties;
+        //descriptor.getProperties()
+        
+        if (jdbcTemplate.queryForInt(PLUGIN_EXISTS, descriptor.getPluginURI()) > 0) {           
             logger.info("update Plugin: " + descriptor.getTitle());
             jdbcTemplate.update(PLUGIN_UPDATE, descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getId(), descriptor.getPluginURI());
-            addPluginProperties(descriptor.getPluginURI(),descriptor.getProperties(),true);
+            //addPluginProperties(descriptor.getPluginURI(),,true);
         } else {
             logger.info("add Plugin: " + descriptor.getTitle());
             jdbcTemplate.update(PLUGIN_ADD, descriptor.getPluginURI(), descriptor.getPluginType(), descriptor.getTitle(), descriptor.getDescription(), descriptor.getPluginClass(), descriptor.getId(), true);
-            addPluginProperties(descriptor.getPluginURI(),descriptor.getProperties(),false);
+            //addPluginProperties(descriptor.getPluginURI(),descriptor.getProperties(),false);
         }
     }
     
@@ -76,6 +77,7 @@ public class JdbcPluginManager implements PluginManager {
         jdbcTemplate.update(PLUGIN_DEACTIVATE, pluginURI);
     }
 
+    /*
     // TODO: get also Properties for the Plugins
     public List<PluginDescriptor> listAvailablePlugins(String[] types) {
         String t = "";
@@ -112,5 +114,6 @@ public class JdbcPluginManager implements PluginManager {
             // TODO: trhow exception
             return null;
         }
-    }
+    }    
+    */
 }
