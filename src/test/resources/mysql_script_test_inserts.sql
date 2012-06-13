@@ -446,10 +446,16 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstanceProperty` (
   `PluginInstanceID` INT NOT NULL ,
   `Name` VARCHAR(255) NOT NULL ,
   `Value` VARCHAR(255) NOT NULL ,
+  INDEX `PluginPropertyFKK1` (`Name` ASC) ,
   PRIMARY KEY (`PluginInstanceID`, `Name`) ,
   CONSTRAINT `PluginInstanceFKK`
     FOREIGN KEY (`PluginInstanceID` )
     REFERENCES `flower`.`PluginInstance` (`PluginInstanceID` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `PluginPropertyFKK1`
+    FOREIGN KEY (`Name` )
+    REFERENCES `flower`.`PluginProperty` (`Name` )
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
