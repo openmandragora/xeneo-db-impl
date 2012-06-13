@@ -39,6 +39,8 @@ public class PluginUtil {
             pc.setPluginType(pt);
             pc.setPluginClass("my.classes.Something");
             pc.addProperties(pp);
+            pc.setId(j);
+            
         }
         
         return list;
