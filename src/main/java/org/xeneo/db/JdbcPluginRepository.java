@@ -104,6 +104,7 @@ public class JdbcPluginRepository implements PluginRepository {
             Map<String,Object> parameters = new HashMap<String,Object>();
             parameters.put("PluginURI", pc.getPluginURI());
             parameters.put("OwnerURI", pc.getOwnerURI());
+            parameters.put("Active", true);
             Number n = insertPluginInstance.executeAndReturnKey(parameters);
            
             addPluginInstanceProperties(n.intValue(), pc.getProperties(), false);
