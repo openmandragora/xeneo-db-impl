@@ -98,7 +98,6 @@ public class JdbcPluginRepository implements PluginRepository {
         jdbcTemplate.update(PLUGIN_DEACTIVATE, pluginURI);
     }
 
-
     public void configurePlugin(PluginConfiguration pc) {
         if (pc.getId()<0) {
             Map<String,Object> parameters = new HashMap<String,Object>();
