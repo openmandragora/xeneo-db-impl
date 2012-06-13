@@ -23,17 +23,10 @@
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
     	<property name="dataSource" ref="dataSource"></property>
     </bean>
-    
-    <bean id="engine" class="org.xeneo.db.JdbcCaseEngine">
+        
+    <bean id="uriGen" class="org.xeneo.db.services.URIGenerator" factory-method="getInstance">
         <property name="dataSource" ref="dataSource" />
+        <property name="baseURI" value="http://mytest.org" />       
     </bean>
     
-    <bean id="stream" class="org.xeneo.db.JdbcActivityStream">
-    	<property name="jdbcTemplate" ref="jdbcTemplate" />
-    </bean>
-    
-    <bean id="manager" class="org.xeneo.db.JdbcActivityManager">
-    	<property name="jdbcTemplate" ref="jdbcTemplate" />
-    </bean>   
-
 </beans>
