@@ -429,6 +429,7 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginProperty` (
   `Type` VARCHAR(255) NOT NULL ,
   INDEX `PluginFK` (`PluginURI` ASC) ,
   PRIMARY KEY (`PluginURI`, `Name`) ,
+  INDEX `NameIndex` (`Name` ASC) ,
   CONSTRAINT `PluginFK`
     FOREIGN KEY (`PluginURI` )
     REFERENCES `flower`.`Plugin` (`PluginURI` )
