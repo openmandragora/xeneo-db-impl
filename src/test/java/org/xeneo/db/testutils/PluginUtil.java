@@ -2,7 +2,8 @@ package org.xeneo.db.testutils;
 
 import java.util.*;
 import org.xeneo.core.plugin.PluginConfiguration;
-import org.xeneo.core.plugin.PluginDescriptor;
+import org.xeneo.core.plugin.PluginProperty;
+import org.xeneo.core.plugin.PluginPropertyType;
 import org.xeneo.core.plugin.PluginType;
 
 /**
@@ -11,62 +12,35 @@ import org.xeneo.core.plugin.PluginType;
  */
 public class PluginUtil {
 
-    public List<PluginDescriptor> createRandomPlugins(int i, PluginType[] types) {
-        Set<String> props = new HashSet<String>();
+    public List<PluginConfiguration> createRandomPluginConfigurations(int i, PluginType pt) {        
+        List<PluginConfiguration> list = new ArrayList<PluginConfiguration>();
         
-        // Some Test Properties
-        props.add("Name");
-        props.add("FeedUrl");
-        props.add("Bonsai");
-        props.add("JoshiUrl");
-        props.add("Blub");        
-        /*
-        List<PluginDescriptor> list = new ArrayList<PluginDescriptor>();
-        for (int j = 0; j < i; j++) {
-
-            PluginDescriptor pd = new PluginDescriptor();
-            pd.setTitle("Plugin Title " + j);
-            pd.setDescription("Plugin Description " + j);
-            pd.setPluginURI("http://test.com/plugin/" + Calendar.getInstance().getTimeInMillis() + "/" + j);
-            pd.setPluginType(types[j % types.length]);
-            pd.setId(Calendar.getInstance().getTimeInMillis());
-            pd.setPluginClass("org.xeneo.Plugin" + j);
-                      
-            Iterator<String> it = props.iterator();
-            while (it.hasNext()) {
-                pd.addProperty(it.next());
-            }         
+        PluginProperty[] pp = new PluginProperty[3];
+        pp[0] = new PluginProperty();
+        pp[0].setName("feedUrl");
+        pp[0].setType(PluginPropertyType.URI);
+        pp[0].setValue("somevalue");
+        pp[1] = new PluginProperty();
+        pp[1].setName("folderName");
+        pp[1].setType(PluginPropertyType.TEXT);
+        pp[1].setValue("some folder name");
+        pp[2] = new PluginProperty();
+        pp[2].setName("email");
+        pp[2].setType(PluginPropertyType.EMAIL);
+        pp[2].setValue("some@something.at");
+        
+        for(int j = 0; j < i; j++) {
             
-            list.add(pd);
-        }
-*/
-        return null;
-    }
-
-    public List<PluginConfiguration> createRandomPluginConfigurations(int i, String pluginURI, String ownerURI) {
-        List<PluginConfiguration> pcs = new ArrayList<PluginConfiguration>();
-
-        for (int j = 0; j < i; j++) {
-
             PluginConfiguration pc = new PluginConfiguration();
-            
-           
-
-            Properties props = new Properties();
-            props.setProperty("testProperty1" + j, "something1");
-            props.setProperty("testProperty2" + j, "something2");
-            props.setProperty("testProperty3" + j, "something3");
-            props.setProperty("testProperty4" + j, "something4");
-
-            // pc.setConfigurationProperties(props);
-            
-            pcs.add(pc);
+            pc.setTitle("Plugin Title " + j + Calendar.getInstance().getTimeInMillis());
+            pc.setDescription("Plugin Description " + j + Calendar.getInstance().getTimeInMillis());
+            pc.setPluginURI("http://something.com/plugin/" + j);
+            pc.setOwnerURI("http://someone.com");
+            pc.setPluginType(pt);
+            pc.setPluginClass("my.classes.Something");
+            pc.addProperties(pp);
         }
-
-        return pcs;
-    }
-    
-    public PluginConfiguration createRandomPluginConfiguration(String pluginURI, String ownerURI) {
-        return this.createRandomPluginConfigurations(1, pluginURI, ownerURI).get(0);
+        
+        return list;
     }
 }

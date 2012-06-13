@@ -4,6 +4,7 @@
  */
 package org.xeneo.db.security;
 
+import org.junit.*;
 import org.xeneo.db.security.JdbcUser;
 import org.xeneo.core.security.User;
 import org.xeneo.core.services.UserServices;
@@ -15,17 +16,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
  *
  * @author Stefan Huber
  */
+
+@Ignore
 public class JdbcAuthenticationTest {
     
     private static Logger logger = LoggerFactory.getLogger(JdbcAuthenticationTest.class);

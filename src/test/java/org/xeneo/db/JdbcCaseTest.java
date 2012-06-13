@@ -7,17 +7,13 @@ package org.xeneo.db;
 import java.util.Calendar;
 import org.xeneo.db.JdbcCaseEngine;
 import java.util.Date;
+import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xeneo.core.task.Case;
 // import org.apache
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +26,7 @@ import org.xeneo.core.task.CaseType;
  * @author Stefan Huber
  */
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-config.xml")
 public class JdbcCaseTest {

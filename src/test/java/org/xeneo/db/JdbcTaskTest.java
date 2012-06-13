@@ -10,13 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.xeneo.core.task.Task;
 
 import javax.sql.DataSource;
+import org.junit.*;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.ApplicationContext;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Stefan Huber
  */
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-config.xml")
 public class JdbcTaskTest {
