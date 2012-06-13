@@ -29,7 +29,6 @@ import org.xeneo.core.task.Task;
  * @author Stefan Huber
  */
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-config.xml")
 public class JdbcActivityTest {

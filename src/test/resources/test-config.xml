@@ -12,12 +12,6 @@
     
     <c:property-placeholder location="classpath:test.properties" />
     <c:annotation-config />
-    
-    <!--
-    <jdbc:embedded-database id="dataSource2" type="HSQL">
-        <jdbc:script location="classpath:mysql_script_test_inserts.sql" />
-    </jdbc:embedded-database>    
-    -->
                 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${jdbc.driver}"/>
@@ -25,6 +19,10 @@
         <property name="username" value="${jdbc.username}"/>
         <property name="password" value="${jdbc.password}"/>
     </bean> 
+            
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+    	<property name="dataSource" ref="dataSource"></property>
+    </bean>
     
     <bean id="engine" class="org.xeneo.db.JdbcCaseEngine">
         <property name="dataSource" ref="dataSource" />
@@ -34,54 +32,6 @@
         <property name="dataSource" ref="dataSource" />
         <property name="baseURI" value="http://mytest.org" />       
     </bean>
-        
-    
-    <!-- security -->
-    
-    <!--security:global-method-security>
-        <security:protect-pointcut expression="execution(* at.stefanhuber.flower.db.JdbcSession.*(..))" access="ROLE_USER" />
-    </security:global-method-security
-    
-    <security:global-method-security secured-annotations="enabled"/>
-    
-    <security:http use-expressions="true">
-        <security:form-login login-page="/login" />
-        <security:intercept-url pattern="/**" access="isAuthenticated()" />
-    </security:http>
-    
-    <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider user-service-ref="daoAuthenticationProvider" />
-    </security:authentication-manager>
-       
-    -->
-    <bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
-        <property name="providers">
-            <list>
-                <ref local="daoAuthenticationProvider"/>
-            </list>
-        </property>
-    </bean>    
-    
-    <bean id="jdbcUserDetailsService" class="org.xeneo.db.security.JdbcUserDetailsService">
-        <property name="dataSource" ref="dataSource" />
-    </bean>
-    
-    <bean id="userManager" class="org.xeneo.db.security.JdbcUserManager">
-        <property name="jdbcTemplate" ref="jdbcTemplate" />
-    </bean>
-    
-    
-    <bean id="mapper" class="org.xeneo.db.services.JdbcUserMapping">
-        <property name ="jdbcTemplate" ref="jdbcTemplate" />
-    </bean>
-    
-    <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-        <property name="userDetailsService" ref="jdbcUserDetailsService"/>      
-    </bean>
-    
-    <bean id="userServices" class="org.xeneo.db.services.JdbcUserServices">
-        <property name="dataSource" ref="dataSource" />
-    </bean>
     
     <bean id="stream" class="org.xeneo.db.JdbcActivityStream">
     	<property name="jdbcTemplate" ref="jdbcTemplate" />
@@ -89,19 +39,6 @@
     
     <bean id="manager" class="org.xeneo.db.JdbcActivityManager">
     	<property name="jdbcTemplate" ref="jdbcTemplate" />
-    </bean>    
-    
-    <bean id="pluginManager" class="org.xeneo.db.JdbcPluginManager">
-        <property name="jdbcTemplate" ref="jdbcTemplate" />
-    </bean>
-    
-    <bean id="pluginInstanceManager" class="org.xeneo.db.JdbcPluginInstanceManager">
-        <property name="jdbcTemplate" ref="jdbcTemplate" />
-    </bean>
-    
-    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-    	<property name="dataSource" ref="dataSource"></property>
-    </bean>
-    
-    <bean id="pluginUtil" class="org.xeneo.db.testutils.PluginUtil" />
+    </bean>   
+
 </beans>

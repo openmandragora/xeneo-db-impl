@@ -13,13 +13,10 @@ import org.xeneo.core.task.CaseType;
 import org.xeneo.core.task.Task;
 
 import java.util.Calendar;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.ApplicationContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,7 +27,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Stefan Huber
  */
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-config.xml")
 public class JdbcCaseEngineTest {

@@ -26,7 +26,6 @@ import org.xeneo.core.task.CaseType;
  * @author Stefan Huber
  */
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-config.xml")
 public class JdbcCaseTest {

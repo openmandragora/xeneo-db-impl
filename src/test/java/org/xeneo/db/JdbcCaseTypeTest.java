@@ -26,13 +26,9 @@ import org.xeneo.core.task.CaseEngine;
  * @author Stefan Huber
  */
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-config.xml")
 public class JdbcCaseTypeTest {
-        
-    @Autowired
-    private AuthenticationManager am;
     
     @Autowired
     private JdbcCaseEngine engine;
