@@ -73,6 +73,35 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `flower`.`Recommendation`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `flower`.`Recommendation` ;
+
+CREATE  TABLE IF NOT EXISTS `flower`.`Recommendation` (
+  `CaseTypeURI` VARCHAR(255) NOT NULL ,
+  `Predecessor` VARCHAR(255) NOT NULL ,
+  `Successor` VARCHAR(255) NOT NULL ,
+  `Relevance` double NULL ,
+  PRIMARY KEY (`CaseTypeUri`,`Predecessor`,`Successor`),
+  CONSTRAINT `FKCaseTypeURI`
+  Foreign Key (`CaseTypeURI`)
+  References `flower`.`CaseType` (`CaseTypeURI`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+  CONSTRAINT `FKPredecessor`
+  Foreign Key (`Predecessor`)
+  References `flower`.`Task` (`TaskURI`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE,
+  CONSTRAINT `FKSuccessor`
+  Foreign Key (`Successor`)
+  References `flower`.`Task` (`TaskURI`)
+  ON DELETE NO ACTION
+  ON UPDATE CASCADE
+  )
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
 -- Table `flower`.`Object`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `flower`.`Object` ;
