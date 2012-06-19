@@ -9,7 +9,7 @@ import org.xeneo.core.activity.Object;
 
 public class JdbcActivityManager implements ActivityManager {
 
-    private Logger logger = LoggerFactory.getLogger(JdbcActivityManager.class);
+    private static Logger logger = LoggerFactory.getLogger(JdbcActivityManager.class);
     private JdbcTemplate jdbcTemplate;
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
