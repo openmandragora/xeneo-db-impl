@@ -50,10 +50,6 @@ public class JdbcPluginRepository implements PluginRepository {
     private static final String PLUGIN_INSTANCE_PROPERTY_ADD = "insert into PluginInstanceProperty (PluginInstanceID,Name,Value) values %s";
     private static final String PLUGIN_INSTANCE_PROPERTY_DELETE = "delete from PluginInstanceProperty where PluginInstanceID = ?";
 
-    public void init() {
-        logger.info("PluginManager initialized.");
-    }
-
     public void addPlugin(PluginConfiguration configuration) {
         logger.info("Try to add plugin with URI: " + configuration.getPluginURI() + " and name: " + configuration.getTitle());
 
@@ -147,6 +143,7 @@ public class JdbcPluginRepository implements PluginRepository {
                 PluginConfiguration pc = new PluginConfiguration();
                 pc.setPluginURI(pluginURI);
                 pc.setPluginType(PluginType.ACTIVITY_PLUGIN);
+                pc.setPluginClass(className);
                 pc.setOwnerURI(userURI);
                 pc.setTitle(title);
                 pc.setDescription(desc);

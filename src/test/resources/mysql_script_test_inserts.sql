@@ -3,7 +3,7 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
 DROP SCHEMA IF EXISTS `flower` ;
-CREATE SCHEMA IF NOT EXISTS `flower` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+CREATE SCHEMA IF NOT EXISTS `flower` DEFAULT CHARACTER SET utf8 ;
 USE `flower` ;
 
 -- -----------------------------------------------------
@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS `flower`.`CaseType` ;
 CREATE  TABLE IF NOT EXISTS `flower`.`CaseType` (
   `CaseTypeURI` VARCHAR(255) NOT NULL ,
   `Title` VARCHAR(100) NOT NULL ,
-  `Description` TEXT NULL ,
+  `Description` TEXT NULL DEFAULT NULL ,
   PRIMARY KEY (`CaseTypeURI`) ,
   UNIQUE INDEX `CaseTypeURI_UNIQUE` (`CaseTypeURI` ASC) )
 ENGINE = InnoDB;
@@ -28,7 +28,7 @@ DROP TABLE IF EXISTS `flower`.`Case` ;
 CREATE  TABLE IF NOT EXISTS `flower`.`Case` (
   `CaseURI` VARCHAR(255) NOT NULL ,
   `Title` VARCHAR(100) NOT NULL ,
-  `Description` TEXT NULL ,
+  `Description` TEXT NULL DEFAULT NULL ,
   `CreationDate` DATETIME NOT NULL ,
   `CaseTypeURI` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`CaseURI`) ,
@@ -52,7 +52,7 @@ CREATE  TABLE IF NOT EXISTS `flower`.`User` (
   `FirstName` VARCHAR(55) NOT NULL ,
   `LastName` VARCHAR(55) NOT NULL ,
   `Password` VARCHAR(100) NOT NULL ,
-  `UserName` VARCHAR(45) NULL ,
+  `UserName` VARCHAR(45) NULL DEFAULT NULL ,
   PRIMARY KEY (`UserURI`) ,
   UNIQUE INDEX `UserURI_UNIQUE` (`UserURI` ASC) )
 ENGINE = InnoDB;
@@ -66,7 +66,7 @@ DROP TABLE IF EXISTS `flower`.`Task` ;
 CREATE  TABLE IF NOT EXISTS `flower`.`Task` (
   `TaskURI` VARCHAR(255) NOT NULL ,
   `Title` VARCHAR(100) NOT NULL ,
-  `Description` TEXT NULL ,
+  `Description` TEXT NULL DEFAULT NULL ,
   PRIMARY KEY (`TaskURI`) ,
   UNIQUE INDEX `TaskURI_UNIQUE` (`TaskURI` ASC) )
 ENGINE = InnoDB;
@@ -81,25 +81,27 @@ CREATE  TABLE IF NOT EXISTS `flower`.`Recommendation` (
   `CaseTypeURI` VARCHAR(255) NOT NULL ,
   `Predecessor` VARCHAR(255) NOT NULL ,
   `Successor` VARCHAR(255) NOT NULL ,
-  `Relevance` double NULL ,
-  PRIMARY KEY (`CaseTypeUri`,`Predecessor`,`Successor`),
+  `Relevance` DOUBLE NULL DEFAULT NULL ,
+  PRIMARY KEY (`CaseTypeURI`, `Predecessor`, `Successor`) ,
+  INDEX `FKPredecessor` (`Predecessor` ASC) ,
+  INDEX `FKSuccessor` (`Successor` ASC) ,
   CONSTRAINT `FKCaseTypeURI`
-  Foreign Key (`CaseTypeURI`)
-  References `flower`.`CaseType` (`CaseTypeURI`)
-  ON DELETE NO ACTION
-  ON UPDATE CASCADE,
+    FOREIGN KEY (`CaseTypeURI` )
+    REFERENCES `flower`.`CaseType` (`CaseTypeURI` )
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
   CONSTRAINT `FKPredecessor`
-  Foreign Key (`Predecessor`)
-  References `flower`.`Task` (`TaskURI`)
-  ON DELETE NO ACTION
-  ON UPDATE CASCADE,
+    FOREIGN KEY (`Predecessor` )
+    REFERENCES `flower`.`Task` (`TaskURI` )
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
   CONSTRAINT `FKSuccessor`
-  Foreign Key (`Successor`)
-  References `flower`.`Task` (`TaskURI`)
-  ON DELETE NO ACTION
-  ON UPDATE CASCADE
-  )
+    FOREIGN KEY (`Successor` )
+    REFERENCES `flower`.`Task` (`TaskURI` )
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `flower`.`Object`
@@ -122,7 +124,7 @@ DROP TABLE IF EXISTS `flower`.`ActivityProvider` ;
 CREATE  TABLE IF NOT EXISTS `flower`.`ActivityProvider` (
   `ActivityProviderURI` VARCHAR(255) NOT NULL ,
   `ActivityProviderName` VARCHAR(255) NOT NULL ,
-  `ActivityProviderType` VARCHAR(255) NULL ,
+  `ActivityProviderType` VARCHAR(255) NULL DEFAULT NULL ,
   PRIMARY KEY (`ActivityProviderURI`) )
 ENGINE = InnoDB;
 
@@ -134,7 +136,7 @@ DROP TABLE IF EXISTS `flower`.`Actor` ;
 
 CREATE  TABLE IF NOT EXISTS `flower`.`Actor` (
   `ActorURI` VARCHAR(255) NOT NULL ,
-  `ActorName` VARCHAR(255) NULL ,
+  `ActorName` VARCHAR(255) NULL DEFAULT NULL ,
   `ActivityProviderURI` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`ActorURI`) ,
   INDEX `ActorActivityProviderURI` (`ActivityProviderURI` ASC) ,
@@ -157,9 +159,9 @@ CREATE  TABLE IF NOT EXISTS `flower`.`Activity` (
   `ActorURI` VARCHAR(255) NOT NULL ,
   `ActionURI` VARCHAR(255) NOT NULL ,
   `ObjectURI` VARCHAR(255) NOT NULL ,
-  `TargetURI` VARCHAR(255) NULL ,
-  `Description` TEXT NULL ,
-  `Summary` VARCHAR(255) NULL ,
+  `TargetURI` VARCHAR(255) NULL DEFAULT NULL ,
+  `Description` TEXT NULL DEFAULT NULL ,
+  `Summary` VARCHAR(255) NULL DEFAULT NULL ,
   `ActivityProviderURI` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`ActivityURI`) ,
   UNIQUE INDEX `ActivityURI_UNIQUE` (`ActivityURI` ASC) ,
@@ -242,8 +244,8 @@ DROP TABLE IF EXISTS `flower`.`Operation` ;
 CREATE  TABLE IF NOT EXISTS `flower`.`Operation` (
   `OperationID` INT NOT NULL AUTO_INCREMENT ,
   `Title` VARCHAR(150) NOT NULL ,
-  `CaseTypeURI` VARCHAR(255) NULL ,
-  `TaskURI` VARCHAR(255) NULL ,
+  `CaseTypeURI` VARCHAR(255) NULL DEFAULT NULL ,
+  `TaskURI` VARCHAR(255) NULL DEFAULT NULL ,
   PRIMARY KEY (`OperationID`) ,
   INDEX `Operation_RightAssignment` (`CaseTypeURI` ASC) ,
   INDEX `Operation_Task` (`TaskURI` ASC) ,
@@ -353,11 +355,11 @@ DROP TABLE IF EXISTS `flower`.`Plugin` ;
 CREATE  TABLE IF NOT EXISTS `flower`.`Plugin` (
   `PluginURI` VARCHAR(255) NOT NULL ,
   `Title` VARCHAR(100) NOT NULL ,
-  `Description` TEXT NULL ,
+  `Description` TEXT NULL DEFAULT NULL ,
   `Classname` VARCHAR(255) NOT NULL ,
   `Active` TINYINT(1) NOT NULL ,
   `PluginType` VARCHAR(255) NOT NULL ,
-  `BundleID` MEDIUMTEXT NULL ,
+  `BundleID` MEDIUMTEXT NULL DEFAULT NULL ,
   PRIMARY KEY (`PluginURI`) ,
   UNIQUE INDEX `PluginURI_UNIQUE` (`PluginURI` ASC) )
 ENGINE = InnoDB;
@@ -499,6 +501,8 @@ DROP TABLE IF EXISTS `flower`.`UserMapping` ;
 CREATE  TABLE IF NOT EXISTS `flower`.`UserMapping` (
   `UserURI` VARCHAR(255) NOT NULL ,
   `ActorURI` VARCHAR(255) NOT NULL ,
+  INDEX `UserMappingUserURI` (`UserURI` ASC) ,
+  INDEX `UserMappingActorURI` (`ActorURI` ASC) ,
   CONSTRAINT `UserMappingUserURI`
     FOREIGN KEY (`UserURI` )
     REFERENCES `flower`.`User` (`UserURI` )
@@ -535,8 +539,7 @@ inner join Actor act on a.ActorURI = act.ActorURI
 inner join Object o on a.ObjectURI = o.ObjectURI
 inner join Object t on a.TargetURI = t.ObjectURI
 inner join TaskContext tc on a.ActivityURI = tc.ActivityURI
-inner join ActivityProvider ap on a.ActivityProviderURI = ap.ActivityProviderURI
-;
+inner join ActivityProvider ap on a.ActivityProviderURI = ap.ActivityProviderURI;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
@@ -544,28 +547,10 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
--- Data for table `flower`.`CaseType`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `flower`;
-INSERT INTO `flower`.`CaseType` (`CaseTypeURI`, `Title`, `Description`) VALUES ('http://stefanhuber.at/flower/test/ecommerce_case', 'Ecommerce Project', 'This CaseType represents an Ecommerce Project');
-
-COMMIT;
-
--- -----------------------------------------------------
--- Data for table `flower`.`Case`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `flower`;
-INSERT INTO `flower`.`Case` (`CaseURI`, `Title`, `Description`, `CreationDate`, `CaseTypeURI`) VALUES ('http://stefanhuber.at/flower/test/case_1', 'My Case title', 'Case 1 Description', '2001-10-10 23:59:59', 'http://stefanhuber.at/flower/test/ecommerce_case');
-
-COMMIT;
-
--- -----------------------------------------------------
 -- Data for table `flower`.`User`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `flower`;
-INSERT INTO `flower`.`User` (`UserURI`, `FirstName`, `LastName`, `Password`, `UserName`) VALUES ('http://stefanhuber.at/user/stefan', 'Stefan', 'Huber', 'blub', NULL);
+INSERT INTO `flower`.`User` (`UserURI`, `FirstName`, `LastName`, `Password`, `UserName`) VALUES ('http://stefanhuber.at/users#stefan', 'Stefan', 'Huber', 'blub', NULL);
 
 COMMIT;

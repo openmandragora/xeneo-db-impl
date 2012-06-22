@@ -66,7 +66,7 @@ public class JdbcUser implements UserDetails, User {
     public Collection<GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
 
-        auths.add(new GrantedAuthorityImpl("ROLE_SOMEONE"));
+        auths.add(new GrantedAuthorityImpl("ROLE_USER"));
 
         return auths;
     }

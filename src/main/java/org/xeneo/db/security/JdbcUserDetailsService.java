@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.xeneo.db.security;
 
+import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -21,7 +18,6 @@ public class JdbcUserDetailsService extends JdbcDaoSupport implements UserDetail
 
     private static String GET_USER_BY_USERNAME = "select * from `User` where UserURI = ?";
     
-
     public UserDetails loadUserByUsername(String userURI) throws UsernameNotFoundException {
         List<JdbcUser> users = loadUsersByUsername(userURI);
         if (users.size() < 1) {
@@ -34,13 +30,13 @@ public class JdbcUserDetailsService extends JdbcDaoSupport implements UserDetail
     private List<JdbcUser> loadUsersByUsername(String userURI) {
         return getJdbcTemplate().query(GET_USER_BY_USERNAME, new String[]{userURI}, new RowMapper<JdbcUser>() {
             public JdbcUser mapRow(ResultSet rs, int rowNum) throws SQLException {
-                String username = rs.getString("UserName");
+                           
                 String password = rs.getString("Password");
                 String firstName = rs.getString("FirstName");
                 String lastName = rs.getString("LastName");
-                String userURI = rs.getString("UserURI");
+                String userURI = rs.getString("UserURI");                              
                 
-                return new JdbcUser(username, password, firstName, lastName, userURI);
+                return new JdbcUser(URI.create(userURI).getFragment(), password, firstName, lastName, userURI);
             }
         });
     }

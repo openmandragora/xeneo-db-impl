@@ -22,23 +22,21 @@ import org.xeneo.db.security.JdbcUser;
 public class JdbcUserServices implements UserServices {
 
     private JdbcTemplate jdbcTemplate;
-    
-    public void setJdbcTemplate(JdbcTemplate jdbcTemplate){
+
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-    
     private static String GET_JDBCUSER = "select * from 'User' where UserURI = ?";
-    
-    protected JdbcUser getCurrentJdbcUser() {                
+
+    protected JdbcUser getCurrentJdbcUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         JdbcUser user = null;
         if (principal instanceof JdbcUser) {
-        user = (JdbcUser) principal;
+            user = (JdbcUser) principal;
         }
         return user;
-        
-         }
-                
+    }
+
     public JdbcUser getCurrentUser() {
         return getCurrentJdbcUser();
     }
@@ -46,6 +44,4 @@ public class JdbcUserServices implements UserServices {
     public String getCurrentUserURI() {
         return getCurrentJdbcUser().getUserURI();
     }
-
-    
 }
