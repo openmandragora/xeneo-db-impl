@@ -5,6 +5,7 @@
 package org.xeneo.db;
 
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.xeneo.core.XeneoException;
 import org.xeneo.core.services.UserServices;
 import org.xeneo.core.task.Case;
 import org.xeneo.core.task.CaseEngine;
@@ -25,7 +26,7 @@ public class JdbcCaseEngine extends JdbcDaoSupport implements CaseEngine {
     
     private static String CASE_BY_URI_QUERY = "select count(*) from `Case` where CaseURI = ?";
         
-    public Case getCaseByURI(String URI) {        
+    public Case getCaseByURI(String URI) throws XeneoException {        
         int count = getJdbcTemplate().queryForInt(CASE_BY_URI_QUERY, URI);
         
         if (count == 1) {
@@ -33,7 +34,7 @@ public class JdbcCaseEngine extends JdbcDaoSupport implements CaseEngine {
         }
               
         // TODO: think of a Exception Hierarchy for xeneo...
-        throw new UnsupportedOperationException("Not supported yet.");        
+        throw new XeneoException("There is no Case for the URI: " + URI);        
     }
     
     public Case createCase(String caseTypeURI, String title) {

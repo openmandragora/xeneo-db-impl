@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.xeneo.core.XeneoException;
 import org.xeneo.core.task.CaseType;
 
 /**
@@ -51,14 +52,21 @@ public class JdbcCaseTest {
     public void tearDown() {
     }
     
+    private static String caseURI = "";
+    private static String caseTypeURI = "";
+    
     @Test
     public void testCaseStory() {
         
         String title = "case title"; String desc = "case desc";
         
         CaseType ct = engine.createCaseType("my test type", "description");
+        caseTypeURI = ct.getCaseTypeURI();
         
         Case c1 = engine.createCase(ct.getCaseTypeURI(), title, desc);
+        
+        logger.info("Create new Case with URI: " + c1.getCaseURI());
+        caseURI = c1.getCaseURI();
         
         assertEquals(ct.getCaseTypeURI(),c1.getCaseTypeURI());
         assertEquals(c1.getTitle(),title);
@@ -75,10 +83,20 @@ public class JdbcCaseTest {
         
     }
     
-   
+    @Test 
+    public void testNewCase() {
+        Case myCase = engine.createCase(caseTypeURI, "MyTitle");
+        
+        assertTrue(!myCase.getCaseURI().isEmpty());
+        assertTrue(!myCase.getCaseTypeURI().isEmpty());
+        assertTrue(myCase.getDescription().isEmpty());
+        assertTrue(!myCase.getTitle().isEmpty());       
+    }
+       
     @Test
-    public void testCaseAttributes() {
-        String case_1 = "http://stefanhuber.at/flower/test/case_1";
+    public void testCaseAttributes() throws XeneoException {
+        String case_1 = caseURI;
+        logger.info("Try to retrieve case for URI: " + caseURI);
         
         Case myCase = engine.getCaseByURI(case_1);        
         assertEquals(myCase.getCaseURI(),case_1);       
@@ -91,20 +109,13 @@ public class JdbcCaseTest {
         logger.info("CaseURI: " + myCase.getCaseURI() + ", Title: " + myCase.getTitle() + ", Description: " + myCase.getDescription() + ", Creation Date: " + d);
     }
     
-    @Test 
-    public void testNewCase() {
-        Case myCase = engine.createCase("http://stefanhuber.at/flower/test/ecommerce_case", "MyTitle");
-        
-        assertTrue(!myCase.getCaseURI().isEmpty());
-        assertTrue(!myCase.getCaseTypeURI().isEmpty());
-        assertTrue(myCase.getDescription().isEmpty());
-        assertTrue(!myCase.getTitle().isEmpty());       
-    }
+
     
     @Test
-    public void testUpdateTitle() {
-        String case_1 = "http://stefanhuber.at/flower/test/case_1";
+    public void testUpdateTitle() throws XeneoException {
+        String case_1 = caseURI;
         
+        logger.info("Try to retrieve case for URI: " + caseURI);
         Case myCase = engine.getCaseByURI(case_1);
         
         String old = myCase.getTitle();
@@ -114,9 +125,10 @@ public class JdbcCaseTest {
     }
     
     @Test
-    public void testUpdateDescription() {
-        String case_1 = "http://stefanhuber.at/flower/test/case_1";
+    public void testUpdateDescription() throws XeneoException {
+        String case_1 = caseURI;
         
+        logger.info("Try to retrieve case for URI: " + caseURI);
         Case myCase = engine.getCaseByURI(case_1);
         
         String old = myCase.getDescription();

@@ -4,8 +4,6 @@
  */
 package org.xeneo.db;
 
-import org.xeneo.db.JdbcCaseEngine;
-import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Date;
 import org.xeneo.core.task.Case;
@@ -21,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.xeneo.core.XeneoException;
 
 /**
  *
@@ -71,10 +70,10 @@ public class JdbcCaseEngineTest {
         
     }
     
-    @Test
-    public void testGetCaseByURI() {
+    @Test(expected = XeneoException.class)
+    public void testGetCaseByURI() throws XeneoException {
         
-        String case_1 = "http://stefanhuber.at/flower/test/case_1";
+        String case_1 = "http://stefanhuber.at/something/which/not/exists";
         
         Case myCase = engine.getCaseByURI(case_1);
         

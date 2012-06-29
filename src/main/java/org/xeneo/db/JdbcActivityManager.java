@@ -63,35 +63,37 @@ public class JdbcActivityManager implements ActivityManager {
         ActivityProvider ap = a.getActivityProvider();
 
         // check if object exists otherwise create one
-        if (isExistingObject(obj.getObjectURI())) {
+        if (obj != null && isExistingObject(obj.getObjectURI())) {
             jdbcTemplate.update(UPDATE_OBJECT_BY_URI, obj.getObjectName(), obj.getObjectTypeURI(), obj.getObjectURI());
         } else {
             jdbcTemplate.update(ADD_OBJECT, obj.getObjectURI(), obj.getObjectName(), obj.getObjectTypeURI());
         }
 
+        // TODO: Find better solution than this for null pointer exception checking, also for other activity objects
         // check if target exists otherwise create one
-        if (isExistingObject(tar.getObjectURI())) {
-            jdbcTemplate.update(UPDATE_OBJECT_BY_URI, tar.getObjectName(), tar.getObjectTypeURI(), tar.getObjectURI());
-        } else {
-            jdbcTemplate.update(ADD_OBJECT, tar.getObjectURI(), tar.getObjectName(), tar.getObjectTypeURI());
-        }
+        if (tar != null)
+            if (isExistingObject(tar.getObjectURI())) {
+                jdbcTemplate.update(UPDATE_OBJECT_BY_URI, tar.getObjectName(), tar.getObjectTypeURI(), tar.getObjectURI());
+            } else {
+                jdbcTemplate.update(ADD_OBJECT, tar.getObjectURI(), tar.getObjectName(), tar.getObjectTypeURI());
+            }
 
         // check if ActivityProvider exists otherwise create one
-        if (isExistingActivityProvider(ap.getActivityProviderURI())) {
+        if (ap != null && isExistingActivityProvider(ap.getActivityProviderURI())) {
             jdbcTemplate.update(UPDATE_ACTIVITYPROVIDER_BY_URI, ap.getActivityProviderName(), ap.getActivityProviderType(), ap.getActivityProviderURI());
         } else {
             jdbcTemplate.update(ADD_ACTIVITYPROVIDER, ap.getActivityProviderURI(), ap.getActivityProviderName(), ap.getActivityProviderType());
         }
 
         // check if actor exists otherwise create one
-        if (isExistingActor(acto.getActorURI())) {
+        if (acto != null && isExistingActor(acto.getActorURI())) {
             jdbcTemplate.update(UPDATE_ACTOR_BY_URI, acto.getActorName(), acto.getActivityProviderURI(), acto.getActorURI());
         } else {
             jdbcTemplate.update(ADD_ACTOR, acto.getActorURI(), acto.getActorName(), acto.getActivityProviderURI());
         }
-
-        jdbcTemplate.update(ADD_ACTIVITY, a.getActivityURI(), a.getCreationDate(), acto.getActorURI(), a.getActionURI(), obj.getObjectURI(), tar.getObjectURI(), a.getDescription(), a.getSummary(), ap.getActivityProviderURI());
-
+        
+        // TODO find better solution for target null pointer...
+        jdbcTemplate.update(ADD_ACTIVITY, a.getActivityURI(), a.getCreationDate(), acto.getActorURI(), a.getActionURI(), obj.getObjectURI(), tar == null ? null : tar.getObjectURI(), a.getDescription(), a.getSummary(), ap.getActivityProviderURI());
     }
 
     public void addActivity(Activity activity, Map<String, Collection<String>> caseTaskURIs) {

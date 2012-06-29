@@ -118,24 +118,15 @@ public class JdbcActivityTest {
         List<Activity> acts = this.createRandomActivities("storytest"+ Calendar.getInstance().getTimeInMillis(), n);
         for (int i = 0; i < n; i++) {
             
+            if (n%2 == 0) {
+                acts.get(i).setTarget(null);
+                assertTrue(acts.get(i).getTarget() == null);
+            }
+            
             manager.addActivity(acts.get(i), context);
         }
-/*
-        Set<String> cases = context.keySet();
 
-        Iterator<String> ci = cases.iterator();
-        while (ci.hasNext()) {
-            String c = ci.next();
-            List<Activity> as = stream.getActivities(c, n);
-            
-
-            for (int j = 0; j < n; j++) {
-                Activity a = as.get(j);
-                assertEquals(a.getActor().getActorURI(), "http://xeneo.org/user/markus/ActivityProviderName: "+j+"/ActorName: "+j);
-
-            }
-        }
-        */
+       
     }
     
     @Test
