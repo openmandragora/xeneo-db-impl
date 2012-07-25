@@ -29,7 +29,7 @@ public class URIGenerator extends JdbcDaoSupport {
     private static String UPDATE_URI_NUMBER = "update `URIGenerator` set Number = ? where BaseURI = ?";
     
     private static Logger logger = LoggerFactory.getLogger(URIGenerator.class);
-    private static String symbols = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static String symbols = "0123456789abcdefghijklmnopqrstuvwxyz"; //ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static int length; // 62 in standard case
     /*
      * This variable represents the amount of URIs already created and maps to a

@@ -52,7 +52,7 @@ public class URIGeneratorTest {
     @Ignore
     public void getPossibleStrings() {
         Stack<Character> st = new Stack<Character>();
-        String s = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String s = "0123456789abcdefghijklmnopqrstuvwxyz"; //ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         int l = s.length();
         String h;
         for(int i=0;i<100000;i++) {
