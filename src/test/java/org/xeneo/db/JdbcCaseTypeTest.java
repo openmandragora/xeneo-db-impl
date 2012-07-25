@@ -4,22 +4,16 @@
  */
 package org.xeneo.db;
 
-import org.xeneo.db.JdbcCaseType;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xeneo.core.task.CaseType;
-
-import javax.sql.DataSource;
 import org.junit.*;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.ApplicationContext;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.xeneo.core.task.CaseEngine;
+import org.xeneo.core.task.CaseManager;
 
 /**
  *
@@ -31,7 +25,7 @@ import org.xeneo.core.task.CaseEngine;
 public class JdbcCaseTypeTest {
     
     @Autowired
-    private JdbcCaseEngine engine;
+    private JdbcCaseManager engine;
     
     static final Logger logger = LoggerFactory.getLogger(JdbcTaskTest.class);
     
@@ -77,9 +71,8 @@ public class JdbcCaseTypeTest {
         
         assertTrue(!ct.getCaseTypeURI().isEmpty() && !ct.getTitle().isEmpty() && !ct.getDescription().isEmpty());
         
-        ct.updateTitle("new CaseType Title");
-        ct.updateDescription("new CaseType description");
-        
+        ct.update("new CaseType Title","new CaseType description");
+                
         assertFalse(title.equalsIgnoreCase(ct.getTitle()) || description.equalsIgnoreCase(ct.getDescription()));
         
     }

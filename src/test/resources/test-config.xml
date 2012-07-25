@@ -21,20 +21,24 @@
     </bean> 
             
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="dataSource"></property>
-    </bean>
-    
-    <bean id="engine" class="org.xeneo.db.JdbcCaseEngine">
         <property name="dataSource" ref="dataSource" />
     </bean>
     
-    <bean id="stream" class="org.xeneo.db.JdbcActivityStream">
+    <bean id="caseManager" class="org.xeneo.db.JdbcCaseManager" />     
+    
+    <bean id="activityRepository" class="org.xeneo.db.JdbcActivityRepository">
         <property name="jdbcTemplate" ref="jdbcTemplate" />
     </bean>
     
-    <bean id="manager" class="org.xeneo.db.JdbcActivityManager">
+    <bean id="taskContextManager" class="org.xeneo.db.JdbcTaskContextManager">
         <property name="jdbcTemplate" ref="jdbcTemplate" />
-    </bean>   
+    </bean>
+    
+    <bean id="userService" class="org.xeneo.db.security.JdbcUserService" />   
+    
+    <bean id="userManager" class="org.xeneo.db.security.JdbcUserManager">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
     
     <bean id="uriGen" class="org.xeneo.db.services.URIGenerator" factory-method="getInstance">
         <property name="dataSource" ref="dataSource" />

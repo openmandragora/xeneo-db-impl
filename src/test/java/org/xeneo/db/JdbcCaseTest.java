@@ -1,19 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.xeneo.db;
 
 import java.util.Calendar;
-import org.xeneo.db.JdbcCaseEngine;
 import java.util.Date;
 import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xeneo.core.task.Case;
-// import org.apache
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.ApplicationContext;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +24,10 @@ import org.xeneo.core.task.CaseType;
 @ContextConfiguration(locations = "/test-config.xml")
 public class JdbcCaseTest {
     
-    static final Logger logger = LoggerFactory.getLogger(JdbcCaseTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(JdbcCaseTest.class);
     
     @Autowired
-    private JdbcCaseEngine engine;
+    private JdbcCaseManager engine;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -74,22 +67,19 @@ public class JdbcCaseTest {
         
         assertTrue(c1.getCreationDate().before(Calendar.getInstance().getTime()));      
         
-        c1.updateTitle("new title");
-        assertFalse(title.equalsIgnoreCase(c1.getTitle()));
-        
-        c1.updateDescription("new desc");
-        assertFalse(desc.equals(c1.getDescription()));
-        
+        c1.update("new title","new desc");
+        assertFalse(title.equalsIgnoreCase(c1.getTitle()));       
+        assertFalse(desc.equals(c1.getDescription()));        
         
     }
     
     @Test 
     public void testNewCase() {
-        Case myCase = engine.createCase(caseTypeURI, "MyTitle");
+        Case myCase = engine.createCase(caseTypeURI, "My Test Title","My Test Description");
         
         assertTrue(!myCase.getCaseURI().isEmpty());
         assertTrue(!myCase.getCaseTypeURI().isEmpty());
-        assertTrue(myCase.getDescription().isEmpty());
+        assertTrue(!myCase.getDescription().isEmpty());
         assertTrue(!myCase.getTitle().isEmpty());       
     }
        
@@ -112,28 +102,17 @@ public class JdbcCaseTest {
 
     
     @Test
-    public void testUpdateTitle() throws XeneoException {
+    public void testUpdateTitleAndDescription() throws XeneoException {
         String case_1 = caseURI;
         
         logger.info("Try to retrieve case for URI: " + caseURI);
         Case myCase = engine.getCaseByURI(case_1);
         
-        String old = myCase.getTitle();
-        myCase.updateTitle("my new title" + Calendar.getInstance().getTime());
+        String oldTitle = myCase.getTitle();
+        String oldDescription = myCase.getDescription();
+        myCase.update("my new title" + Calendar.getInstance().getTime(),"my new description" + Calendar.getInstance().getTime());
         
-        assertFalse(old.equals(myCase.getTitle()));                
-    }
-    
-    @Test
-    public void testUpdateDescription() throws XeneoException {
-        String case_1 = caseURI;
-        
-        logger.info("Try to retrieve case for URI: " + caseURI);
-        Case myCase = engine.getCaseByURI(case_1);
-        
-        String old = myCase.getDescription();
-        myCase.updateDescription("my new description" + Calendar.getInstance().getTime());
-        
-        assertFalse(old.equals(myCase.getDescription()));   
+        assertFalse(oldTitle.equals(myCase.getTitle()));     
+        assertFalse(oldDescription.equals(myCase.getDescription()));    
     }
 }

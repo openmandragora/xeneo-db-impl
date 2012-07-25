@@ -52,7 +52,7 @@ CREATE  TABLE IF NOT EXISTS `flower`.`User` (
   `FirstName` VARCHAR(55) NOT NULL ,
   `LastName` VARCHAR(55) NOT NULL ,
   `Password` VARCHAR(100) NOT NULL ,
-  `UserName` VARCHAR(45) NULL DEFAULT NULL ,
+  `Email` VARCHAR(100) NOT NULL ,
   PRIMARY KEY (`UserURI`) ,
   UNIQUE INDEX `UserURI_UNIQUE` (`UserURI` ASC) )
 ENGINE = InnoDB;
@@ -527,18 +527,31 @@ CREATE TABLE IF NOT EXISTS `flower`.`ActivityView` (`ActivityURI` INT, `Creation
 DROP VIEW IF EXISTS `flower`.`ActivityView` ;
 DROP TABLE IF EXISTS `flower`.`ActivityView`;
 USE `flower`;
-CREATE  OR REPLACE VIEW ActivityView AS
-SELECT a.ActivityURI, a.CreationDate,
-a.ActorURI, a.ActionURI, act.ActorName,
-a.ObjectURI, o.Name AS ObjectName, o.ObjectTypeURI,
-t.ObjectURI AS TargetURI, t.Name AS TargetName, t.ObjectTypeURI AS TargetTypeURI,
-a.ActivityProviderURI, ap.ActivityProviderName, ap.ActivityProviderType,
-a.Description, a.Summary, tc.TaskURI, tc.CaseURI
+CREATE OR REPLACE VIEW ActivityView AS
+SELECT 
+    a.ActivityURI as ActivityURI,
+    a.CreationDate as CreationDate,
+    a.ActorURI as ActorURI,
+    a.ActionURI as ActionURI,
+    act.ActorName as ActorName,
+    a.ObjectURI as ObjectURI,
+    o.Name AS ObjectName,
+    o.ObjectTypeURI as ObjectTypeURI,
+    t.ObjectURI AS TargetURI,
+    t.Name AS TargetName,
+    t.ObjectTypeURI AS TargetTypeURI,
+    a.ActivityProviderURI as ActivityProviderURI,
+    ap.ActivityProviderName as ActivityProviderName,
+    ap.ActivityProviderType as ActivityProviderType,
+    a.Description as Description,
+    a.Summary as Summary,
+    tc.TaskURI as TaskURI,
+    tc.CaseURI as CaseURI
 from Activity a
 inner join Actor act on a.ActorURI = act.ActorURI
 inner join Object o on a.ObjectURI = o.ObjectURI
-inner join Object t on a.TargetURI = t.ObjectURI
-inner join TaskContext tc on a.ActivityURI = tc.ActivityURI
+left outer join Object t on a.TargetURI = t.ObjectURI
+left outer join TaskContext tc on a.ActivityURI = tc.ActivityURI
 inner join ActivityProvider ap on a.ActivityProviderURI = ap.ActivityProviderURI;
 
 
@@ -551,6 +564,6 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `flower`;
-INSERT INTO `flower`.`User` (`UserURI`, `FirstName`, `LastName`, `Password`, `UserName`) VALUES ('http://stefanhuber.at/users#stefan', 'Stefan', 'Huber', 'blub', NULL);
+INSERT INTO `flower`.`User` (`UserURI`, `FirstName`, `LastName`, `Password`, `Email`) VALUES ('http://stefanhuber.at/users#stefan', 'Stefan', 'Huber', 'blub', 'mail@stefanhuber.at');
 
 COMMIT;

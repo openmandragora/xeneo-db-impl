@@ -15,24 +15,10 @@ import org.springframework.security.core.userdetails.UserDetails;
  *
  * @author Stefan Huber
  */
-public class JdbcUser implements UserDetails, User {
+public class JdbcUser extends User implements UserDetails {
 
-    private String FirstName, LastName, UserURI, Username, Password;
-
-    public JdbcUser(String Username, String Password, String FirstName, String LastName, String UserURI) {
-        this.FirstName = FirstName;
-        this.LastName = LastName;
-        this.UserURI = UserURI;
-        this.Username = Username;
-        this.Password = Password;
-    }
-
-    public String getPassword() {
-        return this.Password;
-    }
-
-    public String getUsername() {
-        return this.Username;
+    JdbcUser(String userURI, String firstName, String lastName, String email, String password) {
+        super(userURI,firstName,lastName,email,password);
     }
 
     public boolean isAccountNonExpired() {
@@ -49,18 +35,6 @@ public class JdbcUser implements UserDetails, User {
 
     public boolean isEnabled() {
         return true;
-    }
-
-    public String getUserURI() {
-        return this.UserURI;
-    }
-
-    public String getFirstName() {
-        return this.FirstName;
-    }
-
-    public String getLastName() {
-        return this.LastName;
     }
 
     public Collection<GrantedAuthority> getAuthorities() {

@@ -4,22 +4,22 @@
  */
 package org.xeneo.db;
 
+import java.util.*;
 import org.xeneo.core.security.User;
 import org.xeneo.core.task.Case;
 import org.xeneo.core.task.Task;
 import org.xeneo.db.services.URIGenerator;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.sql.DataSource;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.xeneo.core.security.UserManager;
 
 /**
  *
  * @author Stefan Huber
  */
-public class JdbcCase extends JdbcDaoSupport implements Case {
+public class JdbcCase implements Case {
+    
+    private JdbcTemplate jdbcTemplate;
+    private UserManager userManager;
     
     private static String CASE_ATTRIBUTES_QUERY = "select * from `Case` where CaseURI = ?";
     private static String CASE_ATTRIBUTES_UPDATE = "update `Case` set Title = ?, Description = ? where CaseURI = ?";
@@ -35,25 +35,25 @@ public class JdbcCase extends JdbcDaoSupport implements Case {
     private String description;    
     private Date date;
     
-    public JdbcCase(DataSource dataSource, String caseURI) {
-        this.setDataSource(dataSource);
+    /* retrieve old case */
+    public JdbcCase(JdbcTemplate jdbcTemplate,UserManager userManager,String caseURI) {     
+        this.jdbcTemplate = jdbcTemplate;
+        this.userManager = userManager;
         this.caseURI = caseURI;        
         this.updateMe = true;        
     }
     
-    public JdbcCase(DataSource dataSource, String caseTypeURI, String title, String description) {
-        this.setDataSource(dataSource);
+    /* create new case, with an additional call to createCase(), TODO: these needs to be refactored completely...*/
+    public JdbcCase(JdbcTemplate jdbcTemplate,UserManager userManager, String caseTypeURI, String title, String description) {        
         this.caseTypeURI = caseTypeURI;
         this.title = title; 
         this.description = description;
-        this.date = Calendar.getInstance().getTime();
+        this.jdbcTemplate = jdbcTemplate;
+        this.userManager = userManager;
+        this.date = Calendar.getInstance().getTime();      
         
         createCase();
-        this.updateMe = false;
-    }
-    
-    public JdbcCase(DataSource dataSource, String caseTypeURI, String title) {
-        this(dataSource,caseTypeURI,title,"");
+        this.updateMe = false;       
     }
     
     private void createCase() {
@@ -61,7 +61,7 @@ public class JdbcCase extends JdbcDaoSupport implements Case {
             
             caseURI = URIGenerator.getInstance().generateURI("case");
             
-            getJdbcTemplate().update(CREATE_NEW_CASE,caseURI,title,date,caseTypeURI);
+            jdbcTemplate.update(CREATE_NEW_CASE,caseURI,title,date,caseTypeURI);
         }
     }
     
@@ -70,7 +70,7 @@ public class JdbcCase extends JdbcDaoSupport implements Case {
     }
     
     private void updateMe() {
-        Map<String,Object> map = getJdbcTemplate().queryForMap(CASE_ATTRIBUTES_QUERY,this.caseURI);
+        Map<String,Object> map = jdbcTemplate.queryForMap(CASE_ATTRIBUTES_QUERY,this.caseURI);
         if (!map.isEmpty()) {
             this.title = map.containsKey("Title") ? (String) map.get("Title") : "";
             this.description = map.containsKey("Description") ? (String) map.get("Description") : "";
@@ -108,19 +108,16 @@ public class JdbcCase extends JdbcDaoSupport implements Case {
         }
         return this.caseTypeURI;
     }
-
-    public void updateTitle(String title) {
+    
+    public void update(String title, String description) {
         this.title = title;
-        getJdbcTemplate().update(CASE_ATTRIBUTES_UPDATE,title,this.description,this.caseURI);               
-    }
-
-    public void updateDescription(String description) {
         this.description = description;
-        getJdbcTemplate().update(CASE_ATTRIBUTES_UPDATE,this.title,description,this.caseURI);         
+        
+        jdbcTemplate.update(CASE_ATTRIBUTES_UPDATE,title,description,caseURI);
     }
 
     public List<User> getParticipants() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return userManager.listUsersByCaseURI(caseURI);
     }
 
     public List<Task> getPreviousTasks() {
@@ -133,5 +130,9 @@ public class JdbcCase extends JdbcDaoSupport implements Case {
 
     public Task getCurrentTask() {
         throw new UnsupportedOperationException("Not supported yet.");
-    }   
+    }
+
+    public void addParticipants(Collection<String> participants) {
+        userManager.addUsersToCase(participants, caseURI);
+    }
 }

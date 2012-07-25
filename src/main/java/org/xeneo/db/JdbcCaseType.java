@@ -1,21 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.xeneo.db;
 
 import org.xeneo.core.task.CaseType;
 import org.xeneo.db.services.URIGenerator;
-import java.util.Calendar;
 import java.util.Map;
-import javax.sql.DataSource;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 
 /**
  * 
  * @author Stefan Huber
  */
-public class JdbcCaseType extends JdbcDaoSupport implements CaseType {
+public class JdbcCaseType implements CaseType {
 
     private static String CASE_TYPE_ATTRIBUTES_QUERY = "select * from `CaseType` where CaseTypeURI = ?";
     private static String CASE_TYPE_ATTRIBUTES_UPDATE = "update `CaseType` set Title = ?, Description = ? where CaseTypeURI = ?";
@@ -25,9 +21,11 @@ public class JdbcCaseType extends JdbcDaoSupport implements CaseType {
     private boolean updateMe = true;
     private String title;
     private String description;
+    
+    private JdbcTemplate jdbcTemplate;
 
-    public JdbcCaseType(DataSource dataSource, String title, String description) {
-        this.setDataSource(dataSource);
+    public JdbcCaseType(JdbcTemplate jdbcTemplate, String title, String description) {
+        this.jdbcTemplate = jdbcTemplate;
         this.title = title;
         this.description = description;
 
@@ -36,8 +34,8 @@ public class JdbcCaseType extends JdbcDaoSupport implements CaseType {
         this.updateMe = false;
     }
 
-    public JdbcCaseType(DataSource dataSource, String caseTypeURI) {
-        this.setDataSource(dataSource);
+    public JdbcCaseType(JdbcTemplate jdbcTemplate, String caseTypeURI) {
+        this.jdbcTemplate = jdbcTemplate;
         this.caseTypeURI = caseTypeURI;
 
         this.updateMe = true;
@@ -46,7 +44,7 @@ public class JdbcCaseType extends JdbcDaoSupport implements CaseType {
     private void createCaseType() {
         if (caseTypeURI == null) {
             caseTypeURI = URIGenerator.getInstance().generateURI("casetype");
-            getJdbcTemplate().update(CREATE_NEW_CASE_TYPE, caseTypeURI, title, description);
+            jdbcTemplate.update(CREATE_NEW_CASE_TYPE, caseTypeURI, title, description);
         }
     }
 
@@ -71,7 +69,7 @@ public class JdbcCaseType extends JdbcDaoSupport implements CaseType {
     }
 
     private void updateMe() {
-        Map<String, Object> map = getJdbcTemplate().queryForMap(CASE_TYPE_ATTRIBUTES_QUERY, this.caseTypeURI);
+        Map<String, Object> map = jdbcTemplate.queryForMap(CASE_TYPE_ATTRIBUTES_QUERY, this.caseTypeURI);
         if (!map.isEmpty()) {
             this.title = map.containsKey("Title") ? (String) map.get("Title") : "";
             this.description = map.containsKey("Description") ? (String) map.get("Description") : "";
@@ -80,13 +78,9 @@ public class JdbcCaseType extends JdbcDaoSupport implements CaseType {
         updateMe = false;
     }
 
-    public void updateTitle(String title) {
+    public void update(String title, String description) {
         this.title = title;
-        getJdbcTemplate().update(CASE_TYPE_ATTRIBUTES_UPDATE,title,description,caseTypeURI); 
-    }
-
-    public void updateDescription(String description) {
         this.description = description;
-        getJdbcTemplate().update(CASE_TYPE_ATTRIBUTES_UPDATE,title,description,caseTypeURI); 
+        jdbcTemplate.update(CASE_TYPE_ATTRIBUTES_UPDATE,title,description,caseTypeURI);
     }
 }

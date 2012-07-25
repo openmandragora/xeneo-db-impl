@@ -7,17 +7,16 @@ package org.xeneo.db;
 import org.xeneo.core.security.User;
 import org.xeneo.core.task.Task;
 import org.xeneo.db.services.URIGenerator;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  *
  * @author Stefan Huber
  */
-public class JdbcTask extends JdbcDaoSupport implements Task {
+public class JdbcTask implements Task {
 
     private static String TASK_ATTRIBUTES_UPDATE = "update `Task` set Title = ?, Description = ? where TaskURI = ?";
     private static String TASK_ATTRIBUTES_QUERY = "select * from `Task` where TaskURI = ?";
@@ -27,15 +26,17 @@ public class JdbcTask extends JdbcDaoSupport implements Task {
     private String title;
     private String description;
     private boolean updateMe = true;
+    
+    private JdbcTemplate jdbcTemplate;
 
-    public JdbcTask(DataSource dataSource, String taskURI) {
-        this.setDataSource(dataSource);
+    public JdbcTask(JdbcTemplate jdbcTemplate, String taskURI) {
+        this.jdbcTemplate = jdbcTemplate;
         this.taskURI = taskURI;
         this.updateMe = true;
     }
 
-    public JdbcTask(DataSource dataSource, String title, String description) {
-        this.setDataSource(dataSource);
+    public JdbcTask(JdbcTemplate jdbcTemplate, String title, String description) {
+        this.jdbcTemplate = jdbcTemplate;
         this.title = title;
         this.description = description;
 
@@ -47,12 +48,12 @@ public class JdbcTask extends JdbcDaoSupport implements Task {
     private void createTask() {
         if (taskURI == null) {           
             taskURI = URIGenerator.getInstance().generateURI("task");
-            getJdbcTemplate().update(CREATE_NEW_TASK, taskURI, title, description);
+            jdbcTemplate.update(CREATE_NEW_TASK, taskURI, title, description);
         }
     }
 
     private void updateMe() {
-        Map<String, Object> map = getJdbcTemplate().queryForMap(TASK_ATTRIBUTES_QUERY, this.taskURI);
+        Map<String, Object> map = jdbcTemplate.queryForMap(TASK_ATTRIBUTES_QUERY, this.taskURI);
         if (!map.isEmpty()) {
             this.title = map.containsKey("Title") ? (String) map.get("Title") : "";
             this.description = map.containsKey("Description") ? (String) map.get("Description") : "";
@@ -83,13 +84,10 @@ public class JdbcTask extends JdbcDaoSupport implements Task {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void updateTitle(String title) {
+    public void update(String title, String description) {
         this.title = title;
-        getJdbcTemplate().update(TASK_ATTRIBUTES_UPDATE, title, description, taskURI);        
-    }
-
-    public void updateDescription(String description) {
         this.description = description;
-        getJdbcTemplate().update(TASK_ATTRIBUTES_UPDATE, title, description, taskURI);        
+        jdbcTemplate.update(TASK_ATTRIBUTES_UPDATE, title, description, taskURI);  
+        updateMe = false;
     }
 }

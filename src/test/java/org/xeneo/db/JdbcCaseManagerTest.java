@@ -28,10 +28,10 @@ import org.xeneo.core.XeneoException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-config.xml")
-public class JdbcCaseEngineTest {
+public class JdbcCaseManagerTest {
     
     @Autowired
-    JdbcCaseEngine engine;
+    JdbcCaseManager engine;
         
     @Before
     public void setUp() {

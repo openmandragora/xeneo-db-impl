@@ -11,8 +11,6 @@ import org.xeneo.core.task.Task;
 
 import javax.sql.DataSource;
 import org.junit.*;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.ApplicationContext;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,7 @@ public class JdbcTaskTest {
     static final Logger logger = LoggerFactory.getLogger(JdbcTaskTest.class);
     
     @Autowired
-    JdbcCaseEngine engine;
+    JdbcCaseManager engine;
     
     public JdbcTaskTest() {
     }
@@ -67,8 +65,7 @@ public class JdbcTaskTest {
         assertEquals(desc,task.getDescription());
         
         
-        task.updateTitle("my blub title");
-        task.updateDescription("my blub description");
+        task.update("my blub title","my blub description");        
         
         logger.info("New Title: " + task.getTitle() + ", new Description: " + task.getDescription());
         
