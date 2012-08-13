@@ -2,7 +2,6 @@ package org.xeneo.db;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xeneo.core.plugin.*;
+import org.xeneo.core.security.User;
+import org.xeneo.core.security.UserManager;
 import org.xeneo.db.testutils.PluginUtil;
 
 /**
@@ -27,6 +28,10 @@ public class JdbcPluginRepositoryTest {
     PluginRepository pm;
     @Autowired
     PluginUtil pUtil;
+    
+    @Autowired
+    UserManager um;
+    
     private final int n = 10;
     Logger logger = LoggerFactory.getLogger(JdbcPluginRepositoryTest.class);
 /*
@@ -50,7 +55,7 @@ public class JdbcPluginRepositoryTest {
     public void tearDown() {
     }
 
-    public List<PluginConfiguration> createRandomPluginConfigurations(int i, PluginType pt) {        
+    public List<PluginConfiguration> createRandomPluginConfigurations(int i, PluginType pt, String userURI) {        
         List<PluginConfiguration> list = new ArrayList<PluginConfiguration>();
         
         PluginProperty[] pp = new PluginProperty[3];
@@ -73,7 +78,7 @@ public class JdbcPluginRepositoryTest {
             pc.setTitle("Plugin Title " + j + Calendar.getInstance().getTimeInMillis());
             pc.setDescription("Plugin Description " + j + Calendar.getInstance().getTimeInMillis());
             pc.setPluginURI("http://something.com/plugin/" + j);
-            pc.setOwnerURI("http://someone.com");
+            pc.setOwnerURI(userURI);
             pc.setPluginType(pt);
             
             pc.setPluginClass("my.classes.Something");
@@ -88,8 +93,10 @@ public class JdbcPluginRepositoryTest {
     
     @Test
     public void testAddPlugin() {
+        
+        String userURI = "http://useruri.org";
 
-        List<PluginConfiguration> pds = createRandomPluginConfigurations(n, PluginType.ACTIVITY_PLUGIN);
+        List<PluginConfiguration> pds = createRandomPluginConfigurations(n, PluginType.ACTIVITY_PLUGIN,userURI);
         logger.info("Start adding Plugins: " + pds.size());
         
         for (PluginConfiguration pc : pds) {
@@ -110,7 +117,10 @@ public class JdbcPluginRepositoryTest {
     @Test
     public void testConfigurePlugin() {
         
-        List<PluginConfiguration> pds = createRandomPluginConfigurations(n, PluginType.ACTIVITY_PLUGIN);
+        String userURI = "http://useruri2.org/user#username";
+        um.addUser(new User(userURI, "User", "Test", "blub", "blab"));
+        
+        List<PluginConfiguration> pds = createRandomPluginConfigurations(n, PluginType.ACTIVITY_PLUGIN,userURI);
         logger.info("Start configurint Plugins: " + pds.size());
         
         for (PluginConfiguration pc : pds) {

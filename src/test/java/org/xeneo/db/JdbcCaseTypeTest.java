@@ -71,9 +71,34 @@ public class JdbcCaseTypeTest {
         
         assertTrue(!ct.getCaseTypeURI().isEmpty() && !ct.getTitle().isEmpty() && !ct.getDescription().isEmpty());
         
-        ct.update("new CaseType Title","new CaseType description");
+        ct.setTitle("new CaseType Title");
+        ct.setDescription("new CaseType description");
+        
+        CaseType a = engine.updateCaseType(ct);        
                 
         assertFalse(title.equalsIgnoreCase(ct.getTitle()) || description.equalsIgnoreCase(ct.getDescription()));
         
+    }
+    
+    @Test
+    public void testGetCaseTypes() {
+        
+        CaseType a = engine.createCaseType("title1","desc1");
+        CaseType b = engine.createCaseType("title2","desc2");
+        
+        int i = 0;
+        for(CaseType x : engine.getCaseTypes()) {
+            
+            logger.info(x.getCaseTypeURI() + " - " + x.getTitle() + " - " + x.getDescription());
+            
+            if (a.getCaseTypeURI().equalsIgnoreCase(x.getCaseTypeURI()) && a.getTitle().equalsIgnoreCase(x.getTitle()) && a.getDescription().equalsIgnoreCase(x.getDescription())) {
+                i++;
+            }
+            if (b.getCaseTypeURI().equalsIgnoreCase(x.getCaseTypeURI()) && b.getTitle().equalsIgnoreCase(x.getTitle()) && b.getDescription().equalsIgnoreCase(x.getDescription())) {
+                i++;
+            }
+        }
+        
+        assertTrue(i>1);
     }
 }

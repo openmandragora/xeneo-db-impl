@@ -25,7 +25,6 @@
     </bean>
         
     <bean id="uriGen" class="org.xeneo.db.services.URIGenerator" factory-method="getInstance">
-        <property name="dataSource" ref="dataSource" />
         <property name="baseURI" value="http://mytest.org" />       
     </bean>
     

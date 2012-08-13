@@ -54,7 +54,8 @@ CREATE  TABLE IF NOT EXISTS `flower`.`User` (
   `Password` VARCHAR(100) NOT NULL ,
   `Email` VARCHAR(100) NOT NULL ,
   PRIMARY KEY (`UserURI`) ,
-  UNIQUE INDEX `UserURI_UNIQUE` (`UserURI` ASC) )
+  UNIQUE INDEX `UserURI_UNIQUE` (`UserURI` ASC) ,
+  INDEX `UserURI` (`UserURI` ASC) )
 ENGINE = InnoDB;
 
 
@@ -377,11 +378,17 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginInstance` (
   `OwnerURI` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`PluginInstanceID`) ,
   INDEX `PluginURI` (`PluginURI` ASC) ,
+  INDEX `OwnerURI2Plugin` (`OwnerURI` ASC) ,
   CONSTRAINT `PluginURI`
     FOREIGN KEY (`PluginURI` )
     REFERENCES `flower`.`Plugin` (`PluginURI` )
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `OwnerURI2Plugin`
+    FOREIGN KEY (`OwnerURI` )
+    REFERENCES `flower`.`User` (`UserURI` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -458,6 +465,7 @@ CREATE  TABLE IF NOT EXISTS `flower`.`PluginProperty` (
   `PluginURI` VARCHAR(255) NOT NULL ,
   `Name` VARCHAR(255) NOT NULL ,
   `Type` VARCHAR(255) NOT NULL ,
+  `Default` VARCHAR(255) NULL ,
   INDEX `PluginFK` (`PluginURI` ASC) ,
   PRIMARY KEY (`PluginURI`, `Name`) ,
   INDEX `NameIndex` (`Name` ASC) ,

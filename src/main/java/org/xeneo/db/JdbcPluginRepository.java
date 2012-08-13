@@ -36,11 +36,11 @@ public class JdbcPluginRepository implements PluginRepository {
     private static final String PLUGIN_ADD = "insert into Plugin (PluginURI,PluginType,Title,Description,Classname,Active) values (?,?,?,?,?,'1')";
     private static final String PLUGIN_DEACTIVATE = "update Plugin set Active='0' where PluginURI = ?";
     // Plugin Property Table
-    private static final String PLUGIN_PROPERTIES_ADD = "insert into PluginProperty (PluginURI,Name,Type) values %s";
+    private static final String PLUGIN_PROPERTIES_ADD = "insert into PluginProperty (PluginURI,Name,Type,`Default`) values %s";
     private static final String PLUGIN_PROPERTIES_DELETE = "delete from pluginproperty where PluginURI = ?";
     // CRAZY PLUGIN LISTING QUERY    
     
-    private static final String PLUGIN_LIST = "select p.PluginURI, p.PluginType, p.Title, p.Description, p.Classname, pp.Name, pp.Type, pi.PluginInstanceID, pip.Value from Plugin p inner join PluginProperty pp on p.pluginURI  = pp.pluginURI left join (select * from PluginInstance where OwnerURI = ?) pi on p.pluginURI = pi.pluginURI left join PluginInstanceProperty pip on (pip.Name = pp.Name and pip.PluginInstanceID = pi.PluginInstanceID) where p.active = '1'";
+    private static final String PLUGIN_LIST = "select p.PluginURI, p.PluginType, p.Title, p.Description, p.Classname, pp.Name, pp.Type, pp.`Default`, pi.PluginInstanceID, pip.Value from Plugin p inner join PluginProperty pp on p.pluginURI  = pp.pluginURI left join (select * from PluginInstance where OwnerURI = ?) pi on p.pluginURI = pi.pluginURI left join PluginInstanceProperty pip on (pip.Name = pp.Name and pip.PluginInstanceID = pi.PluginInstanceID) where p.active = '1'";
     
     // Plugin Instance Table
     private static final String PLUGIN_INSTANCE_EXISTS = "select count(*) from PluginInstance where PluginURI = ? and OwnerURI = ?";
@@ -74,7 +74,7 @@ public class JdbcPluginRepository implements PluginRepository {
 
         String values = "";
         for (PluginProperty p : props) {
-            values += ",('" + pluginURI + "','" + p.getName() + "','" + p.getType().name() + "')";
+            values += ",('" + pluginURI + "','" + p.getName() + "','" + p.getType().name() + "','" + p.getValue() + "')";
         }
 
         // substring 1 to strip the first ","
@@ -123,7 +123,7 @@ public class JdbcPluginRepository implements PluginRepository {
 
     public List<PluginConfiguration> listAvailablePlugins(String userURI, PluginType[] pts) {
 
-        SqlRowSet set = jdbcTemplate.queryForRowSet(PLUGIN_LIST, userURI);
+        SqlRowSet set = jdbcTemplate.queryForRowSet(PLUGIN_LIST, userURI); //TODO PluginType has to be checked
         Map<String, PluginConfiguration> output = new HashMap<String, PluginConfiguration>();
 
         while (set.next()) {
@@ -136,13 +136,14 @@ public class JdbcPluginRepository implements PluginRepository {
             String paramName = set.getString("Name");
             String paramType = set.getString("Type");
             String paramValue = set.getString("Value");
+            String defaultValue = set.getString("Default");
             int pluginInstanceId = set.getInt("PluginInstanceID");
 
             if (!output.containsKey(pluginURI)) {
 
                 PluginConfiguration pc = new PluginConfiguration();
                 pc.setPluginURI(pluginURI);
-                pc.setPluginType(PluginType.ACTIVITY_PLUGIN);
+                pc.setPluginType(PluginType.ACTIVITY_PLUGIN); //TODO: set the plugin type according to pluginType
                 pc.setPluginClass(className);
                 pc.setOwnerURI(userURI);
                 pc.setTitle(title);
@@ -162,6 +163,8 @@ public class JdbcPluginRepository implements PluginRepository {
 
             if (paramValue != null && !paramValue.isEmpty()) {
                 pp.setValue(paramValue);
+            } else if (defaultValue != null && !defaultValue.isEmpty()) {
+                pp.setValue(defaultValue);
             }
 
             PluginConfiguration pc = output.get(pluginURI);

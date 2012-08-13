@@ -8,7 +8,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  *
@@ -21,7 +22,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * @author Stefan Huber
  */
-public class URIGenerator extends JdbcDaoSupport {
+public class URIGenerator {
+    
+    @Autowired private JdbcTemplate jdbcTemplate;
 
     private static String GET_NUMBER_BY_URI_QUERY = "select Number from URIGenerator where BaseURI = ?";
     private static String INSERT_NEW_URI = "insert into `URIGenerator` (BaseURI,Number) values (?,?)";
@@ -58,11 +61,11 @@ public class URIGenerator extends JdbcDaoSupport {
             
             baseURI = new URI(uri);
             
-            if (getJdbcTemplate().queryForInt(GET_BY_URI_QUERY,uri) > 0) {
-                n = getJdbcTemplate().queryForLong(GET_NUMBER_BY_URI_QUERY,uri);
+            if (jdbcTemplate.queryForInt(GET_BY_URI_QUERY,uri) > 0) {
+                n = jdbcTemplate.queryForLong(GET_NUMBER_BY_URI_QUERY,uri);
             } else {
                 n = 0;
-                getJdbcTemplate().update(INSERT_NEW_URI, uri, n);                
+                jdbcTemplate.update(INSERT_NEW_URI, uri, n);                
             }        
             
             logger.info(baseURI.toASCIIString() + " is set as base URI with already " + n + " URIs generated.");            
@@ -100,7 +103,7 @@ public class URIGenerator extends JdbcDaoSupport {
             
             out = new URI(u);
             
-            getJdbcTemplate().update(UPDATE_URI_NUMBER, n, baseURI.toASCIIString());                  
+            jdbcTemplate.update(UPDATE_URI_NUMBER, n, baseURI.toASCIIString());                  
         } catch (URISyntaxException ex) {
             logger.error("The URI couldn't be constructed due to the following error: " + ex.getMessage());
         }        

@@ -98,8 +98,8 @@ public class TaskContextGeneratorTest {
         List<String> uris = util.createCasesIntoDatabase(ct.getCaseTypeURI(), 5);
         List<String> tasks = util.createTaskTestData(10);
         
-        for (int i = 0; i < 100; i++)       
-            util.createTaskContexts(this.generateActivities(Calendar.getInstance().getTime()), uris, tasks);
+        for (int i = 0; i < 5; i++)       
+            util.createTaskContexts(this.generateActivities(Calendar.getInstance().getTime()), tasks, uris);
         
        
     }
